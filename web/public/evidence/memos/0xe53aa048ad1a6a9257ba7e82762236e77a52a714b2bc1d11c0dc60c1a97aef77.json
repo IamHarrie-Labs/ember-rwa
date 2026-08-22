@@ -1,0 +1,150 @@
+{
+  "assetId": "0xe53aa048ad1a6a9257ba7e82762236e77a52a714b2bc1d11c0dc60c1a97aef77",
+  "domain": "usebeni.xyz",
+  "observedAt": 1787406206,
+  "grade": "E",
+  "burnTime": 90,
+  "burnTimeTable": {
+    "A": 21600,
+    "B": 10800,
+    "C": 3600,
+    "D": 900,
+    "E": 90
+  },
+  "engine": "claude-opus-5",
+  "features": {
+    "domain": "usebeni.xyz",
+    "tld": "xyz",
+    "labelLength": 7,
+    "ageDays": null,
+    "daysToExpiry": null,
+    "transferLocked": false,
+    "deleteLocked": false,
+    "pendingTransfer": false,
+    "nameservers": [
+      "ns1.vercel-dns.com",
+      "ns2.vercel-dns.com"
+    ],
+    "httpReachable": true,
+    "httpStatus": 200,
+    "redirectsTo": null,
+    "txtRecordCount": 1
+  },
+  "evidenceHash": "0x1d8c5159add327fe02eb0398139e3a81d3b241d18cf66e37fe088f2a1d7014a6",
+  "evidenceBundle": {
+    "domain": "usebeni.xyz",
+    "observedAt": 1787406206,
+    "resolvers": [
+      "1.1.1.1",
+      "8.8.8.8"
+    ],
+    "dns": {
+      "txt": {
+        "ok": true,
+        "records": [
+          "ember=0x3dd87fc502fb86bac5fe453f2ff98f16b75999f451530b6d30587dcfe3fbebc928cd225c65af5fe83376b34294759d6941ee906408b82cf1a71b7d251a50ba5d1b"
+        ]
+      },
+      "ns": {
+        "ok": true,
+        "nameservers": [
+          "ns1.vercel-dns.com",
+          "ns2.vercel-dns.com"
+        ]
+      }
+    },
+    "rdap": {
+      "ok": false,
+      "url": "https://rdap.org/domain/usebeni.xyz",
+      "error": "This operation was aborted"
+    },
+    "http": {
+      "ok": true,
+      "url": "https://usebeni.xyz",
+      "status": 200,
+      "location": null,
+      "server": "Vercel",
+      "contentType": "text/html; charset=utf-8"
+    }
+  },
+  "underwriter": {
+    "grade": "D",
+    "valuationLowUsd": 25,
+    "valuationHighUsd": 150,
+    "memo": "usebeni.xyz is a 7-character .xyz domain resolving live (HTTP 200) behind Vercel's managed DNS (ns1/ns2.vercel-dns.com), with a single TXT record consistent with a hosting/verification setup. That is the entire positive case, and it is thin.\n\nThe control claim is fragile for two reasons. First, both registrar transfer lock and delete lock are reported false, so nothing at the registry/registrar layer impedes an unannounced transfer, nameserver change, or deletion; a proof of control captured now can be invalidated within minutes by a single registrar-panel action. Second, no age or expiry data was recovered (ageDays unknown, daysToExpiry unknown), so we cannot rule out that this is a very recently registered domain or one near expiry. Underwriting standards require grading to the worst plausible reading of missing data, and for an unlocked .xyz with no provenance that reading is a young, cheaply-registered, disposable project domain.\n\nMitigating slightly: the domain is actually serving content and uses a mainstream commercial DNS/hosting provider rather than a parking or free-DNS service, which argues against an abandoned or throwaway registration. But Vercel nameservers are trivially repointed and say nothing about registrar-level durability.\n\nValuation reflects a generic brandable-but-unproven \".xyz\" string with no evidence of traffic, revenue, backlinks, trademark, or age. Absent such evidence the asset is worth little more than the cost of a comparable registration plus a small brandable premium for the short, pronounceable \"usebeni\" label. Recommend D: 15-minute proof-of-control validity. Upgrade to B only on receipt of RDAP showing clientTransferProhibited plus a registration date more than two years past.",
+    "citations": [
+      {
+        "claim": "Registrar-level protections are absent, so ownership can change without warning",
+        "evidence": "transferLocked: false, deleteLocked: false"
+      },
+      {
+        "claim": "Provenance and remaining registration term are unverifiable, forcing a conservative grade",
+        "evidence": "ageDays: unknown, daysToExpiry: unknown"
+      },
+      {
+        "claim": "Domain is currently live and serving content",
+        "evidence": "httpReachable: true, httpStatus: 200"
+      },
+      {
+        "claim": "DNS is delegated to a mainstream managed hosting provider rather than a free or parking service",
+        "evidence": "nameservers: ns1.vercel-dns.com, ns2.vercel-dns.com"
+      },
+      {
+        "claim": "Minimal DNS configuration consistent with a single hosted app, not a mature multi-service estate",
+        "evidence": "txtRecordCount: 1"
+      },
+      {
+        "claim": "Low intrinsic resale value inferred from TLD and generic brandable label",
+        "evidence": "tld: xyz, labelLength: 7"
+      },
+      {
+        "claim": "No pending registry-level state change is currently in flight",
+        "evidence": "pendingTransfer: false"
+      }
+    ],
+    "materialRisks": [
+      "Transfer lock is off: the domain can be moved to another registrar/registrant with no registry-level friction, invalidating any proof of control immediately.",
+      "Delete lock is off: accidental or deliberate deletion is possible, after which the name could drop and be re-registered by a third party.",
+      "Registration age is unknown; the domain may be weeks old, which correlates strongly with abandonment and non-renewal.",
+      "Expiry date is unknown; the name could lapse without warning if renewal is missed, and .xyz has a high non-renewal rate.",
+      "Redirect target is unknown, so the served 200 response may be a placeholder, parked page, or redirect to an unrelated property rather than an operating business.",
+      "Vercel nameservers are repointed with a single dashboard action, so DNS-based control proofs decay quickly.",
+      "No evidence of traffic, revenue, backlinks, or trademark rights; valuation rests entirely on the string itself.",
+      "Low-cost TLD means the economic cost of walking away from the asset is negligible for the current holder."
+    ]
+  },
+  "adversary": {
+    "gradeShouldBe": "E",
+    "argument": "The memo's D rests on a mitigant it never actually verified and treats a self-contradictory fact set as merely 'incomplete' rather than unreliable. Start with the contradiction: we are told transferLocked=false and deleteLocked=false and pendingTransfer=false — three registry-layer status assertions — while simultaneously being told ageDays and daysToExpiry are unknown. There is no realistic RDAP/WHOIS response for a .xyz (CentralNic/Identity Digital backend) that returns EPP status codes but omits the registration and expiry event dates; those are in the same object. So either the lookup succeeded and the analyst discarded dates that were present, or the lookup failed and the three booleans are schema defaults rendered as 'false' rather than observed absence of locks. In the second case — the likelier one — the entire registry layer of this file is unobserved, and the D grade is built on facts that do not exist. You cannot grade to 'worst plausible reading of missing data' on age and then quietly treat the lock fields from the same failed source as measured. Second, the single mitigant, 'the domain is actually serving content,' is inferred from httpStatus=200 alone. Vercel returns 200 for placeholder deployments, default project pages, and framework starter templates; redirectsTo is unknown, there is no title, byte count, or content hash in the record. A 7-character 'use'-prefixed label on Vercel with exactly one TXT record is the exact fingerprint of an unlaunched or abandoned side project, not of an operating business. The mitigant and the aggravator are the same fact read two ways. Third, the memo prices a 'brandable premium' for 'usebeni' without noticing that use+<Brand> is a naming convention that borrows an existing mark — 'Beni' is a live commercial brand name in several categories. That is a UDRP/transfer-blocking exposure the memo does not price at all, and it cuts against, not for, the brandable premium. Finally, the D→B upgrade path is too generous: clientTransferProhibited plus two years of age on a ~$12/yr .xyz gets you a locked cheap domain with still no traffic, revenue, backlink, or trademark-clearance evidence. That is a C at best. Given an unverifiable registry layer, an unverified content claim, and unpriced mark risk, E is the honest grade, with proof-of-control treated as valid only for the duration of a live, simultaneous registrar-panel screenshare.",
+    "weakestEvidence": "httpStatus=200 as evidence of a going concern. It is the single fact carrying the entire 'not abandoned/not parked' mitigant, and it does not carry it: Vercel serves 200 on default and placeholder deployments, redirectsTo is unknown, and no page content, title, or response size was captured. Close behind it: transferLocked=false / deleteLocked=false, which cannot credibly coexist with unknown ageDays/daysToExpiry from the same RDAP object and are more likely unobserved defaults than measured statuses.",
+    "unmodelledFailure": "Divergence between the party who can demonstrate control and the registrant. With Vercel-managed DNS, proof of control via the TXT record only proves access to the Vercel project/account — which is routinely held by a contractor, agency, or a co-founder — not access to the registrar account that holds the transfer authorization code. The seller can pass every DNS-based challenge, sign, take funds, and then be unable to produce the auth code because the registrar login belongs to someone else. Compounding it: with expiry unknown and deleteLocked false, an unnoticed auto-renew failure at a reseller drops the name into redemption between signing and transfer, and nothing in this fact set would warn us — no expiry date, no registrar identity, no RDAP timestamp at all."
+  },
+  "provenance": {
+    "underwriter": {
+      "model": "claude-opus-5",
+      "effort": "high",
+      "systemHash": "0xf5c222bd860d07766182e73cf8f7203f2da386e60b9a93dc4efa043e6f48cd0b",
+      "promptHash": "0x28a6108eb60bae1b9fc2dd90342c289ba482bc06643187809d99831864ff322b",
+      "schemaHash": "0x77d29fdc3ee5aa4a15b49d20d80dab886ba1caa97084e798d6be5b015e537791",
+      "outputHash": "0x04e0a3933d1cfb69ae5d29435a19918b73a6edf5b7dfc7f61ce2ba1254036a66",
+      "stopReason": "end_turn",
+      "usage": {
+        "input": 944,
+        "output": 1633
+      }
+    },
+    "adversary": {
+      "model": "claude-opus-5",
+      "effort": "high",
+      "systemHash": "0x4133417c52bc82d5b7bfed234238d26b23f91fc72216ab1f25ab23ac68ced506",
+      "promptHash": "0x8f123fafe5580f470bad1e1da5d701e32e10249981493e3ac2b45153121c9552",
+      "schemaHash": "0x7d05bf0c8daddfac739c3b3ad917ad9db8dc15a3a31cdeb5a730b90dee4baba4",
+      "outputHash": "0x6f551a798b9f2b83f2bbfc23821e38194be5ea5a13ad37e43f2f7829a95c608c",
+      "stopReason": "end_turn",
+      "usage": {
+        "input": 1230,
+        "output": 2603
+      }
+    }
+  }
+}

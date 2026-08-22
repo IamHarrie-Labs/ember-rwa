@@ -1,0 +1,12 @@
+[
+  {
+    "domain": "fleepit.xyz",
+    "note": "Grade D, 15m burn. The asset killed on stage — deleting its TXT record takes it out 30 minutes later.",
+    "signature": "0x0c5b4069e4bae4812332c17713324649d1b7a846eec53f42e058293cfceff0c44253dde7f96fd0c2f142a2ef8f068ade2214a8a8d86a5cf20136fe6ebb2d7f4d1c"
+  },
+  {
+    "domain": "usebeni.xyz",
+    "note": "Grade C, 1h burn. Stays lit through the demo, so the dashboard is never empty.",
+    "signature": "0x3dd87fc502fb86bac5fe453f2ff98f16b75999f451530b6d30587dcfe3fbebc928cd225c65af5fe83376b34294759d6941ee906408b82cf1a71b7d251a50ba5d1b"
+  }
+]

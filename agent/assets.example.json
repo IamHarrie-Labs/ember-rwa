@@ -1,0 +1,12 @@
+[
+  {
+    "domain": "your-aged-domain.com",
+    "note": "long burn time — real history, evidence does not change minute to minute",
+    "signature": "0x… output of: node agent/prove.js your-aged-domain.com"
+  },
+  {
+    "domain": "your-throwaway.xyz",
+    "note": "short burn time — no history, nothing about it is trusted for long",
+    "signature": "0x… output of: node agent/prove.js your-throwaway.xyz"
+  }
+]

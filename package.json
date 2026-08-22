@@ -1,0 +1,29 @@
+{
+  "name": "ember",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An ember dies unless it is fed. A verification primitive for real-world assets on BOT Chain.",
+  "scripts": {
+    "build": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:local": "hardhat run scripts/deploy.js",
+    "deploy:botchain": "hardhat run scripts/deploy.js --network botchain",
+    "prove": "node agent/prove.js",
+    "cycle": "node agent/cycle.js",
+    "cycle:once": "node agent/cycle.js --once",
+    "cycle:dry": "node agent/cycle.js --once --dry",
+    "gas": "hardhat run scripts/gas.js",
+    "underwrite": "node agent/underwrite.js",
+    "publish": "node agent/lib/publish.js"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.117.1",
+    "@openzeppelin/contracts": "5.0.2",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.0"
+  }
+}

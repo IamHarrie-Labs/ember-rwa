@@ -1,0 +1,17 @@
+node_modules/
+.env
+artifacts/
+cache/
+coverage/
+coverage.json
+deployments/*.local.json
+deployments/hardhat.json
+deployments/localhost.json
+
+# The agent's working record. Anchored so it only ignores the repo root — the published
+# copy under web/public/evidence is the site's data and must be committed.
+/evidence/
+
+cycle*.log
+.claude/
+design/

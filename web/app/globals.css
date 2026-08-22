@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Imported from the Ember design project. See brand.md. */
+:root {
+  --paper: #fafaf8;
+  --ink: #0b0b0a;
+  --body: #3a3a36;
+  --muted: #6e6e68;
+  --line: #deded8;
+  --line-soft: #edede7;
+  --panel: #ffffff;
+  --wash: #f3f3ee;
+
+  --ember: oklch(0.63 0.17 42);
+  --ember-deep: oklch(0.6 0.17 42);
+  --dim: #b9b9b0;
+  --out: #9a9a92;
+  --danger: #b4241f;
+
+  /* Inverted sections */
+  --ink-muted: #a8a8a0;
+  --ink-line: #2a2a26;
+
+  color-scheme: light;
+}
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ember);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* Anything a reader might verify against the chain is mono and tabular. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Plain-language emphasis inside prose: italic, not bold, and never more than the accent color. */
+  .accent {
+    font-style: italic;
+    color: var(--ember-deep);
+  }
+
+  /* Grids read as a table: 1px gaps over a line-coloured ground. */
+  .rule-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+}
+
+@keyframes emberPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.pulse {
+  animation: emberPulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

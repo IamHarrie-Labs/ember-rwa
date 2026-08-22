@@ -1,0 +1,14 @@
+{
+  "network": "bohr",
+  "chainId": 968,
+  "deployedAt": "2026-08-17T12:21:43.748Z",
+  "deployer": "0xF6491745Be58d39594484AEfC209b79d037Bb2FB",
+  "verifierSigner": "0xBB67605bfe6f40b99CcaDF7a14577Acf65BEAB82",
+  "contracts": {
+    "SignedAttestationVerifier": "0x48e135184d08d3aCBB2AbD75A71C0E0E017575DD",
+    "EmberRegistry": "0x407aAa38420d56c344da1fc0Ba3F6f4e53D0D768",
+    "AssetToken": "0x6ceAd8e31fda768ffC4F9e8A7a20cA837f546533",
+    "IssuerBond": "0xaDA1Af2F7183Ce17505dc9bF8C52e196872E3F01",
+    "RevenueEscrow": "0xCB57E6D6b159C4bFB8A4058DC082c6DdE8F488DA"
+  }
+}

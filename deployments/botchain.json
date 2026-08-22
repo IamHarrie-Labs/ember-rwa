@@ -1,0 +1,14 @@
+{
+  "network": "botchain",
+  "chainId": 677,
+  "deployedAt": "2026-08-22T13:35:40.942Z",
+  "deployer": "0xF6491745Be58d39594484AEfC209b79d037Bb2FB",
+  "verifierSigner": "0xBB67605bfe6f40b99CcaDF7a14577Acf65BEAB82",
+  "contracts": {
+    "SignedAttestationVerifier": "0x0E8B4F9670fA4942382C77ADD76d9A97840ba6f9",
+    "EmberRegistry": "0x743ecCd95655b42756bB66bE30F5d07c46349936",
+    "AssetToken": "0xBAd328f91418E7725084Ab0D026F4D91800cA989",
+    "IssuerBond": "0x80B4a168913A4Df539D01496601E1Febb6593FCe",
+    "RevenueEscrow": "0xE99f93a33B2457690262Dc04ea9964C82AC10C36"
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "assetId": "0xe4e35412499f2b3a9810d0108e9b432141ccc87a79a42a345101400c64f0a896",
+  "domain": "fleepit.xyz",
+  "observedAt": 1787405912,
+  "grade": "E",
+  "burnTime": 90,
+  "burnTimeTable": {
+    "A": 21600,
+    "B": 10800,
+    "C": 3600,
+    "D": 900,
+    "E": 90
+  },
+  "engine": "claude-opus-5",
+  "features": {
+    "domain": "fleepit.xyz",
+    "tld": "xyz",
+    "labelLength": 7,
+    "ageDays": null,
+    "daysToExpiry": null,
+    "transferLocked": false,
+    "deleteLocked": false,
+    "pendingTransfer": false,
+    "nameservers": [
+      "ns1.vercel-dns.com",
+      "ns2.vercel-dns.com"
+    ],
+    "httpReachable": false,
+    "httpStatus": null,
+    "redirectsTo": null,
+    "txtRecordCount": 1
+  },
+  "evidenceHash": "0xf5c2d0c84865689c4090d39ac7fb92cf598ac487524db7e8c811f115afb8b729",
+  "evidenceBundle": {
+    "domain": "fleepit.xyz",
+    "observedAt": 1787405912,
+    "resolvers": [
+      "1.1.1.1",
+      "8.8.8.8"
+    ],
+    "dns": {
+      "txt": {
+        "ok": true,
+        "records": [
+          "ember=0x0c5b4069e4bae4812332c17713324649d1b7a846eec53f42e058293cfceff0c44253dde7f96fd0c2f142a2ef8f068ade2214a8a8d86a5cf20136fe6ebb2d7f4d1c"
+        ]
+      },
+      "ns": {
+        "ok": true,
+        "nameservers": [
+          "ns1.vercel-dns.com",
+          "ns2.vercel-dns.com"
+        ]
+      }
+    },
+    "rdap": {
+      "ok": false,
+      "url": "https://rdap.org/domain/fleepit.xyz",
+      "error": "This operation was aborted"
+    },
+    "http": {
+      "ok": false,
+      "url": "https://fleepit.xyz",
+      "error": "This operation was aborted"
+    }
+  },
+  "underwriter": {
+    "grade": "D",
+    "valuationLowUsd": 25,
+    "valuationHighUsd": 150,
+    "memo": "fleepit.xyz is a thin-evidence asset that cannot support a long proof-of-control window. Every durability signal an underwriter would normally lean on is either absent or negative: registration age is unknown, days-to-expiry is unknown, and both transferLocked and deleteLocked are false, so there is no registry- or registrar-level friction standing between this name and an unannounced transfer, expiry, or deletion. The .xyz namespace is low-cost and high-churn, which raises the base rate of abandonment relative to a legacy gTLD. The one mildly positive fact is delegation to ns1/ns2.vercel-dns.com, a managed, professionally operated DNS provider rather than a self-hosted or free-tier resolver, and a single TXT record exists, which is consistent with an active verification or mail/ownership record rather than a parked shell. But that positive is undercut by httpReachable=false with an unknown status code and no redirect target: there is no live service on this name at observation time, meaning the asset has no demonstrated operational continuity and no observable content, brand, or traffic to underwrite. Absent HTTP, control can only be re-proved via DNS, and the DNS delegation itself is changeable in minutes at an unlocked registrar. Valuation is nominal - a seven-character invented-word .xyz with no resolving site, no age, and no evidence of revenue or trademark is worth little more than aftermarket floor for a pronounceable string. Grade D (15 minutes) rather than E only because the Vercel delegation and the TXT record indicate deliberate, current administration rather than a dormant three-week-old throwaway; if age or expiry data later shows a very recent creation date, this should drop to E.",
+    "citations": [
+      {
+        "claim": "No registrar-level friction protects against sudden transfer or deletion",
+        "evidence": "transferLocked: false, deleteLocked: false"
+      },
+      {
+        "claim": "Cannot assess renewal risk or registration maturity at all",
+        "evidence": "ageDays: unknown, daysToExpiry: unknown"
+      },
+      {
+        "claim": "No live service exists to re-confirm control via HTTP",
+        "evidence": "httpReachable: false, httpStatus: unknown, redirectsTo: unknown"
+      },
+      {
+        "claim": "DNS is on a managed, professional provider, a mild stability positive",
+        "evidence": "nameservers: ns1.vercel-dns.com, ns2.vercel-dns.com"
+      },
+      {
+        "claim": "Some active DNS administration is present rather than a bare parked record",
+        "evidence": "txtRecordCount: 1"
+      },
+      {
+        "claim": "Low-cost, high-churn namespace raises abandonment base rate",
+        "evidence": "tld: xyz"
+      },
+      {
+        "claim": "No brand, traffic, or revenue evidence supports value beyond aftermarket floor",
+        "evidence": "labelLength: 7 with httpReachable: false and no redirect target"
+      }
+    ],
+    "materialRisks": [
+      "Domain is neither transfer-locked nor delete-locked, so ownership can change or the name can be dropped without warning between verifications",
+      "Registration age and expiry date are both unknown, so imminent expiry or a very recent creation date cannot be ruled out",
+      "HTTP is unreachable, so there is no serving endpoint and no operational-continuity signal; proof of control depends entirely on mutable DNS records",
+      "Nameservers point to a hosting-platform DNS (Vercel), which can be repointed in minutes and may lapse if the underlying platform account is closed or unpaid",
+      ".xyz is a low-cost TLD with elevated non-renewal and speculative-churn rates",
+      "No evidence of traffic, revenue, trademark, or brand value; collateral value is effectively the resale floor of a short pronounceable string"
+    ]
+  },
+  "adversary": {
+    "gradeShouldBe": "E",
+    "argument": "The memo's own facts do not support the one lift it grants. D over E rests entirely on the claim that ns1/ns2.vercel-dns.com plus txtRecordCount=1 shows 'deliberate, current administration.' That inference is backwards. A domain delegated to Vercel DNS that is *serving something* returns HTTP \\u2014 even a deleted project returns a Vercel 404 page, which is httpReachable=true with a status code. Here httpReachable=false with httpStatus=unknown and redirectsTo=unknown means the apex almost certainly has no A/AAAA answer at all: the zone is delegated but empty. That is not active administration; it is precisely the signature of a Vercel project torn down, or a name whose resolution has been suspended, with stale NS left behind because leaving them costs nothing. The 'positive' and the 'negative' are the same observation read twice.\\n\\nSecond, ageDays and daysToExpiry are both unknown for a .xyz, where RDAP publishes creation and expiry openly. Unknown here is not neutral privacy \\u2014 it means the durability record could not be read, and one common reason a lookup returns nothing coherent is a name in an off-normal registry state (serverHold, redemption, pending delete). A name in redemption looks exactly like this fact pattern: NS records intact, no resolution, no HTTP, locks absent. The memo treats an already-possibly-dead domain as a live one pending confirmation.\\n\\nThird, the memo's valuation reasoning defeats its own grade. If the asset is 'little more than aftermarket floor' for a seven-character invented string, the registrant has near-zero economic incentive to renew a $1\\u2013$12 .xyz. Low value plus transferLocked=false plus deleteLocked=false plus unknown expiry makes non-renewal the base case, not the tail.\\n\\nThere is no observed live service, no observed durability data, no lock friction, and no verified content of the single TXT record. Nothing here is underwritable for any window. E.",
+    "weakestEvidence": "txtRecordCount=1 as proof of 'deliberate, current administration.' The count is the minimum non-zero value, the content was never read, and TXT records are free, unauthenticated, and persist indefinitely after abandonment \\u2014 a leftover _vercel or google-site-verification string from a dead project produces this exact observation. A single-bit, zero-cost, non-expiring artifact is being used to move the grade a full band.",
+    "unmodelledFailure": "The domain may already be expired and in registrar hold or redemption grace at observation time. That state reproduces every fact in the record simultaneously \\u2014 nameservers retained, no HTTP, no resolution, no locks, and RDAP durability fields unreadable \\u2014 and it ends in a silent registry deletion with no notice, no bounce, and no transfer event to detect. The memo's 15-minute window assumes a live registration and is invalidated at t=0 if that assumption is false; nothing in the fact set distinguishes the two cases. Related: if the name is registered through Vercel's own reseller registrar, control sits inside a third-party account the buyer cannot audit, where auto-renew-off or account suspension terminates control without any registrar-level signal."
+  },
+  "provenance": {
+    "underwriter": {
+      "model": "claude-opus-5",
+      "effort": "high",
+      "systemHash": "0xf5c222bd860d07766182e73cf8f7203f2da386e60b9a93dc4efa043e6f48cd0b",
+      "promptHash": "0x9c83635088b582c9880362711de695e24ef41f83cbedfd6ad9925ecc0b4f6d1b",
+      "schemaHash": "0x77d29fdc3ee5aa4a15b49d20d80dab886ba1caa97084e798d6be5b015e537791",
+      "outputHash": "0xb61463ce0275c0e517c9592c5d460739249e15528251de4d16f29471db16084f",
+      "stopReason": "end_turn",
+      "usage": {
+        "input": 945,
+        "output": 1599
+      }
+    },
+    "adversary": {
+      "model": "claude-opus-5",
+      "effort": "high",
+      "systemHash": "0x4133417c52bc82d5b7bfed234238d26b23f91fc72216ab1f25ab23ac68ced506",
+      "promptHash": "0x907b99cc1ea8dece9e4fe5a414ca87973f678fe32a47f7f28ff8fb352843e6bf",
+      "schemaHash": "0x7d05bf0c8daddfac739c3b3ad917ad9db8dc15a3a31cdeb5a730b90dee4baba4",
+      "outputHash": "0x8c6e9dd419aab255df189afadb43193f7e5cc924d5c43f0546413d5d61c27a4f",
+      "stopReason": "end_turn",
+      "usage": {
+        "input": 1201,
+        "output": 2602
+      }
+    }
+  }
+}
