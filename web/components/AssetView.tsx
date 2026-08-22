@@ -1,11 +1,52 @@
 "use client";
 
 import Link from "next/link";
+import { BrowserProvider } from "ethers";
 import { useEffect, useState } from "react";
 import { useAssets } from "@/lib/useAssets";
+import { useWallet, injected } from "@/lib/useWallet";
 import { short, type Derived, type Memo } from "@/lib/derive";
-import { EXPLORER, REGISTRY_ADDRESS } from "@/lib/chain";
+import {
+  EXPLORER,
+  REGISTRY_ADDRESS,
+  escrowContract,
+  tokenContract,
+  fetchHolder,
+  fetchAccrued,
+} from "@/lib/chain";
 import { fetchMemo, fetchTimeline, type TimelineRow } from "@/lib/evidence";
+
+/// null holder = the token has not been minted yet, distinct from "no wallet connected".
+function useHolder(assetId?: string) {
+  const [holder, setHolder] = useState<string | null>(null);
+  useEffect(() => {
+    if (!assetId) return;
+    let cancelled = false;
+    setHolder(null);
+    fetchHolder(assetId).then((h) => {
+      if (!cancelled) setHolder(h);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [assetId]);
+  return [holder, () => assetId && fetchHolder(assetId).then(setHolder)] as const;
+}
+
+function useAccrued(assetId?: string) {
+  const [amount, setAmount] = useState<bigint>(0n);
+  useEffect(() => {
+    if (!assetId) return;
+    let cancelled = false;
+    fetchAccrued(assetId).then((a) => {
+      if (!cancelled) setAmount(a);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [assetId]);
+  return [amount, () => assetId && fetchAccrued(assetId).then(setAmount)] as const;
+}
 
 /// The index carries enough to label a card. The full memo — dissent, provenance, citations —
 /// is only pulled for the asset actually being inspected.
@@ -124,6 +165,75 @@ function Headline({ sel }: { sel: Derived }) {
   const memo = sel.memo;
   const message = `ember:${sel.domain}:${sel.issuer.toLowerCase()}`;
 
+  const wallet = useWallet();
+  const [holder, refreshHolder] = useHolder(sel.id);
+  const [accrued, refreshAccrued] = useAccrued(sel.id);
+  const isHolder = !!wallet.address && !!holder && wallet.address.toLowerCase() === holder.toLowerCase();
+  const ready = wallet.address && wallet.onRightChain;
+
+  const [claimBusy, setClaimBusy] = useState(false);
+  const [claimError, setClaimError] = useState<string | null>(null);
+  const [redeemBusy, setRedeemBusy] = useState(false);
+  const [redeemError, setRedeemError] = useState<string | null>(null);
+
+  async function signer() {
+    const eth = injected();
+    if (!eth) throw new Error("No wallet found");
+    return new BrowserProvider(eth as any).getSigner();
+  }
+
+  async function doClaim() {
+    setClaimBusy(true);
+    setClaimError(null);
+    try {
+      const tx = await escrowContract(await signer()).claim(sel.id);
+      await tx.wait();
+      await refreshAccrued();
+    } catch (e) {
+      setClaimError(e instanceof Error ? e.message : "Claim failed");
+    } finally {
+      setClaimBusy(false);
+    }
+  }
+
+  async function doRedeem() {
+    setRedeemBusy(true);
+    setRedeemError(null);
+    try {
+      const tx = await tokenContract(await signer()).redeem(sel.id);
+      await tx.wait();
+      await refreshHolder();
+    } catch (e) {
+      setRedeemError(e instanceof Error ? e.message : "Redeem failed");
+    } finally {
+      setRedeemBusy(false);
+    }
+  }
+
+  let claim: { label: string; onClick?: () => void; busy?: boolean };
+  if (!holder) {
+    claim = { label: "Not minted yet" };
+  } else if (!sel.tradable) {
+    claim = { label: "Revenue escrowed" };
+  } else if (!isHolder) {
+    claim = { label: ready ? "Connect the holder's wallet" : "Connect wallet to claim" };
+  } else if (accrued === 0n) {
+    claim = { label: "Nothing accrued yet" };
+  } else {
+    claim = { label: `Claim ${(Number(accrued) / 1e18).toFixed(4)} BOT`, onClick: doClaim, busy: claimBusy };
+  }
+
+  let redeem: { label: string; onClick?: () => void; busy?: boolean };
+  if (!holder) {
+    redeem = { label: "Not minted yet" };
+  } else if (sel.stateName !== "Redeemable") {
+    redeem = { label: "Redemption closed" };
+  } else if (!isHolder) {
+    redeem = { label: ready ? "Connect the holder's wallet" : "Connect wallet to redeem" };
+  } else {
+    redeem = { label: "Redeem", onClick: doRedeem, busy: redeemBusy };
+  }
+
   return (
     <section className="border-b border-line">
       <div className="mx-auto grid max-w-shell items-start gap-16 px-4 py-14 sm:px-8 lg:grid-cols-[1.05fr_1fr]">
@@ -165,15 +275,22 @@ function Headline({ sel }: { sel: Derived }) {
             </div>
           </div>
 
-          {/* No listing contract exists in v1, so the buy action is disabled rather than faked. */}
+          {/* No listing contract exists in v1, so buy stays a status label rather than a
+              faked control. Claim and redeem call the deployed contracts directly when the
+              connected wallet is the token holder — real transactions, not placeholders. */}
           <div className="mt-6 flex flex-wrap items-center gap-2.5">
             <Action label="Buy: no marketplace in v1" />
-            <Action label={sel.tradable ? "Claim revenue" : "Revenue escrowed"} />
-            <Action label={sel.tradable ? "Redemption closed" : "Redeem"} />
+            <Action {...claim} />
+            <Action {...redeem} />
           </div>
+          {(claimError || redeemError) && (
+            <p className="mt-2.5 font-mono text-[11.5px] text-danger">{claimError || redeemError}</p>
+          )}
           <p className="mt-3.5 font-mono text-[11.5px] leading-[1.7] text-muted">
-            These are not buttons. Each reflects what <span className="text-ink">stateOf()</span> and
-            the contracts above currently report. None of them are wired to a live control yet.
+            Buy has no contract behind it yet, so it is a label, not a button. Claim and redeem
+            are real: they call <span className="text-ink">RevenueEscrow</span> and{" "}
+            <span className="text-ink">AssetToken</span> directly and only activate for the
+            wallet that actually holds this asset.
           </p>
         </div>
 
@@ -227,7 +344,18 @@ function Row({ k, v }: { k: string; v: string }) {
 /// cursor would promise an interaction that does not exist. A status chip, matching the
 /// state-badge language used everywhere else on this page, makes the same information
 /// honest: this is what the contract currently reports, not a control the interface offers.
-function Action({ label }: { label: string }) {
+function Action({ label, onClick, busy }: { label: string; onClick?: () => void; busy?: boolean }) {
+  if (onClick) {
+    return (
+      <button
+        onClick={onClick}
+        disabled={busy}
+        className="inline-flex items-center border border-ink px-3 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors ease-brand hover:bg-ink hover:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:opacity-60"
+      >
+        {busy ? "Confirming…" : label}
+      </button>
+    );
+  }
   return (
     <span className="inline-flex items-center border border-line-soft px-3 py-1.5 font-mono text-[11px] tracking-[0.04em] text-out">
       {label}

@@ -1,5 +1,5 @@
 import { Contract, JsonRpcProvider } from "ethers";
-import { REGISTRY_ABI, STATES, type StateName } from "./abi";
+import { REGISTRY_ABI, TOKEN_ABI, ESCROW_ABI, STATES, type StateName } from "./abi";
 
 // Overridable so the same build can point at testnet (968) while it's the only chain with
 // real on-chain data. Defaults to mainnet.
@@ -8,6 +8,8 @@ export const CHAIN_ID_HEX = `0x${CHAIN_ID.toString(16)}`;
 export const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || "https://rpc.botchain.ai";
 export const EXPLORER = process.env.NEXT_PUBLIC_EXPLORER || "https://scan.botchain.ai";
 export const REGISTRY_ADDRESS = process.env.NEXT_PUBLIC_REGISTRY_ADDRESS || "";
+export const TOKEN_ADDRESS = process.env.NEXT_PUBLIC_TOKEN_ADDRESS || "";
+export const ESCROW_ADDRESS = process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "";
 export const GITHUB_URL = process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com";
 
 /// Rendered in the footer. An address that is not set renders as "not deployed" rather than
@@ -53,6 +55,35 @@ export function readProvider() {
 export function registry(runner: JsonRpcProvider) {
   if (!REGISTRY_ADDRESS) throw new Error("NEXT_PUBLIC_REGISTRY_ADDRESS is not set");
   return new Contract(REGISTRY_ADDRESS, REGISTRY_ABI, runner);
+}
+
+/// `runner` is a Provider for reads or a Signer for the two owner-only actions the UI can
+/// actually perform: redeeming a failed asset and claiming accrued revenue.
+export function tokenContract(runner: any) {
+  if (!TOKEN_ADDRESS) throw new Error("NEXT_PUBLIC_TOKEN_ADDRESS is not set");
+  return new Contract(TOKEN_ADDRESS, TOKEN_ABI, runner);
+}
+
+export function escrowContract(runner: any) {
+  if (!ESCROW_ADDRESS) throw new Error("NEXT_PUBLIC_ESCROW_ADDRESS is not set");
+  return new Contract(ESCROW_ADDRESS, ESCROW_ABI, runner);
+}
+
+/// null means "not minted yet" (ownerOf reverts on a nonexistent token) rather than an error.
+export async function fetchHolder(id: string): Promise<string | null> {
+  try {
+    return await tokenContract(readProvider()).ownerOf(id);
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchAccrued(id: string): Promise<bigint> {
+  try {
+    return await escrowContract(readProvider()).accrued(id);
+  } catch {
+    return 0n;
+  }
 }
 
 async function readAsset(reg: Contract, id: string): Promise<Asset> {

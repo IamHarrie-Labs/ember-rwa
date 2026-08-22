@@ -12,6 +12,13 @@ export const REGISTRY_ABI = [
 
 export const TOKEN_ABI = [
   "function ownerOf(uint256) view returns (address)",
+  "function redeem(bytes32 assetId) external",
+] as const;
+
+export const ESCROW_ABI = [
+  "function accrued(bytes32) view returns (uint256)",
+  "function claim(bytes32 assetId) external",
+  "function release(bytes32 assetId) external",
 ] as const;
 
 /// Index matches the on-chain enum exactly.
