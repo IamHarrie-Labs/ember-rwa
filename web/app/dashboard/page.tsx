@@ -70,9 +70,12 @@ export default function Dashboard() {
               An asset appears once its owner proves control with a DNS record and the underwriter
               writes its burn time on-chain.
             </p>
-            <pre className="mx-auto mt-5 inline-block bg-ink px-4 py-2.5 text-left font-mono text-xs text-paper">
-              npm run prove -- yourdomain.com
-            </pre>
+            <Link
+              href="/list"
+              className="mt-5 inline-block border border-ink px-5 py-2.5 text-[13px] font-medium transition-colors ease-brand hover:bg-ink hover:text-paper"
+            >
+              List your domain
+            </Link>
           </div>
         )}
 

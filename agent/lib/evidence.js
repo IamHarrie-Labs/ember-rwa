@@ -138,22 +138,50 @@ async function collect(domain, readers = {}, nowSec) {
 /// travel down the fast path.
 function evaluate(bundle, { issuer, expectedSignature }) {
   const reasons = [];
-
-  const record = expectedRecord(expectedSignature);
-  const present = bundle.dns.txt.records.includes(record);
-  if (!present) reasons.push("control TXT record absent");
-
+  let present = false;
   let signerMatches = false;
-  if (present) {
-    try {
-      const recovered = ethers.verifyMessage(
-        controlMessage(bundle.domain, issuer),
-        expectedSignature
-      );
-      signerMatches = recovered.toLowerCase() === issuer.toLowerCase();
-      if (!signerMatches) reasons.push(`TXT signature recovers to ${recovered}, not the issuer`);
-    } catch (e) {
-      reasons.push(`TXT signature malformed: ${e.message}`);
+  let signature = null;
+
+  if (expectedSignature) {
+    // A signature is already known — e.g. from `npm run prove`. Check for that exact record.
+    present = bundle.dns.txt.records.includes(expectedRecord(expectedSignature));
+    if (!present) reasons.push("control TXT record absent");
+    if (present) {
+      try {
+        const recovered = ethers.verifyMessage(
+          controlMessage(bundle.domain, issuer),
+          expectedSignature
+        );
+        signerMatches = recovered.toLowerCase() === issuer.toLowerCase();
+        signature = signerMatches ? expectedSignature : null;
+        if (!signerMatches) reasons.push(`TXT signature recovers to ${recovered}, not the issuer`);
+      } catch (e) {
+        reasons.push(`TXT signature malformed: ${e.message}`);
+      }
+    }
+  } else {
+    // Self-serve path: no signature known ahead of time, e.g. an asset registered through
+    // the site rather than the CLI. Any ember= TXT record that recovers to the on-chain
+    // issuer proves control — the same check a third party can run by hand with `dig` and
+    // `ethers.verifyMessage`, just without a pre-shared expectation to compare against.
+    const candidates = bundle.dns.txt.records.filter((r) => r.startsWith(TXT_PREFIX));
+    if (candidates.length === 0) reasons.push("control TXT record absent");
+    for (const record of candidates) {
+      const candidateSig = record.slice(TXT_PREFIX.length);
+      try {
+        const recovered = ethers.verifyMessage(controlMessage(bundle.domain, issuer), candidateSig);
+        if (recovered.toLowerCase() === issuer.toLowerCase()) {
+          present = true;
+          signerMatches = true;
+          signature = candidateSig;
+          break;
+        }
+      } catch {
+        // Not a valid signature — try the next TXT record, if any.
+      }
+    }
+    if (candidates.length > 0 && !signerMatches) {
+      reasons.push("no ember= TXT record recovers to the on-chain issuer");
     }
   }
 
@@ -167,7 +195,7 @@ function evaluate(bundle, { issuer, expectedSignature }) {
     if (!notExpired) reasons.push(`registration expired ${bundle.rdap.expiration}`);
   }
 
-  return { ok: present && signerMatches && notExpired, reasons };
+  return { ok: present && signerMatches && notExpired, reasons, signature };
 }
 
 module.exports = { collect, evaluate, controlMessage, expectedRecord, TXT_PREFIX };

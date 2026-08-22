@@ -24,6 +24,7 @@ const {
   signObservation,
   identifierOf,
   assetIdOf,
+  discoverDomains,
 } = require("./lib/chain");
 
 const ONCE = process.argv.includes("--once");
@@ -37,15 +38,23 @@ const evidenceDir = () => process.env.EVIDENCE_DIR || path.join(ROOT, "evidence"
 /// history file, or the published cycle-health stats silently mix real and test activity.
 const historyFile = () => `history.${process.env.NETWORK || "botchain"}.jsonl`;
 
-function loadAssets() {
+/// Static file for CLI-onboarded demo assets, merged with whatever the registry itself
+/// reveals about self-serve ones (see discoverDomains). Neither list on its own is
+/// complete: the file predates the on-chain convention, and the chain never stores a
+/// domain string for anything registered before that convention existed.
+async function loadAssets(registry) {
   const p = path.join(__dirname, "assets.json");
-  if (!fs.existsSync(p)) {
-    throw new Error(
-      "agent/assets.json not found — copy agent/assets.example.json and fill in the " +
-        "domains plus the signatures printed by `node agent/prove.js <domain>`"
-    );
+  const fromFile = fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, "utf8")) : [];
+  const discovered = await discoverDomains(registry);
+
+  const seen = new Set(fromFile.map((a) => a.domain.toLowerCase()));
+  for (const d of discovered) {
+    if (!seen.has(d.domain)) {
+      fromFile.push({ domain: d.domain });
+      seen.add(d.domain);
+    }
   }
-  return JSON.parse(fs.readFileSync(p, "utf8"));
+  return fromFile;
 }
 
 function record(entry) {
@@ -131,10 +140,10 @@ async function pass(ctx) {
     const { bundle, hash, observedAt } = await gather(domain, chainSec);
     saveBundle(assetId, bundle);
 
-    const verdict = evaluate(bundle, {
-      issuer: onchain.issuer,
-      expectedSignature: entry.signature,
-    });
+    // No expectedSignature: this recovers the signer from whatever ember= TXT record is
+    // actually published and checks it against the on-chain issuer, so it works the same
+    // way whether the asset was onboarded via the CLI or registered by a stranger's wallet.
+    const verdict = evaluate(bundle, { issuer: onchain.issuer });
 
     if (!verdict.ok) {
       // Deliberately silent on-chain. We do not write a negative; we simply stop writing,
@@ -263,11 +272,11 @@ function surviveTransientErrors() {
 
 async function main() {
   surviveTransientErrors();
-  const assets = loadAssets();
   const p = provider();
   const wallet = signerWallet(p);
   const { registry, verifierAddress, deployment } = contracts(wallet);
   const net = await p.getNetwork();
+  const assets = await loadAssets(registry);
 
   log(`network    ${net.name} (chainId ${net.chainId})`);
   log(`registry   ${deployment.contracts.EmberRegistry}`);
@@ -288,6 +297,9 @@ async function main() {
   for (;;) {
     await new Promise((r) => setTimeout(r, POLL_MS));
     try {
+      // Re-discovered every pass so an asset registered through the site gets fed on the
+      // next cycle rather than requiring a process restart.
+      ctx.assets = await loadAssets(registry);
       await pass(ctx);
       // Republish every pass so the site's timeline and cycle health track the record
       // rather than the last deploy.

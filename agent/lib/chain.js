@@ -96,9 +96,32 @@ const assetIdOf = (domain) =>
 
 const STATE = ["None", "Pending", "Live", "Degraded", "Stale", "Broken", "Redeemable"];
 
+/// The registry stores identifier as keccak256(domain) — a one-way hash, by design, so the
+/// chain never holds a plaintext domain list. Self-serve registrations (see web/app/list)
+/// carry the plaintext back through evidenceURI instead, the one free-text field the issuer
+/// already controls at register() time. This is the only place that convention is decoded.
+const DOMAIN_URI_PREFIX = "domain:";
+
+/// Reads every registered asset directly off the registry and recovers the ones a domain
+/// can be read back out of, instead of relying on a hand-maintained list. Lets the proof
+/// cycle and the underwriter pick up an asset the moment someone registers it through the
+/// site, with no operator step in between.
+async function discoverDomains(registry) {
+  const count = Number(await registry.assetCount());
+  const out = [];
+  for (let i = 0; i < count; i++) {
+    const assetId = await registry.assetIds(i);
+    const asset = await registry.getAsset(assetId);
+    if (!asset.evidenceURI || !asset.evidenceURI.startsWith(DOMAIN_URI_PREFIX)) continue;
+    out.push({ domain: asset.evidenceURI.slice(DOMAIN_URI_PREFIX.length).toLowerCase(), assetId });
+  }
+  return out;
+}
+
 module.exports = {
   ROOT,
   KIND_DOMAIN,
+  DOMAIN_URI_PREFIX,
   STATE,
   NETWORK,
   network,
@@ -110,4 +133,5 @@ module.exports = {
   signObservation,
   identifierOf,
   assetIdOf,
+  discoverDomains,
 };

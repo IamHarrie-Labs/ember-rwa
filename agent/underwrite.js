@@ -29,17 +29,6 @@ const { ROOT, KIND_DOMAIN, provider, contracts, identifierOf, assetIdOf } = requ
 
 const GRADES = ["A", "B", "C", "D", "E"];
 
-/// The control signature lives in agent/assets.json alongside the domain, written there
-/// from `npm run prove`. One source of truth shared with the proof cycle.
-function controlSignatureFor(domain) {
-  const p = path.join(__dirname, "assets.json");
-  if (!fs.existsSync(p)) return "0x00";
-  const entry = JSON.parse(fs.readFileSync(p, "utf8")).find(
-    (a) => a.domain.toLowerCase() === domain
-  );
-  return entry?.signature || "0x00";
-}
-
 const UNDERWRITER_SYSTEM = `You are underwriting an internet domain as collateral for a tokenized real-world asset.
 
 You are given deterministic facts extracted from DNS, RDAP, and HTTP. You did not gather
@@ -247,11 +236,10 @@ async function main() {
   }
 
   // Control must be proven before the underwriter will admit. An unverified claim never
-  // reaches a token.
-  const verdict = evaluate(bundle, {
-    issuer: onchain.issuer,
-    expectedSignature: controlSignatureFor(domain),
-  });
+  // reaches a token. No expectedSignature: any ember= TXT record that recovers to the
+  // on-chain issuer counts, whether the asset was onboarded via the CLI or self-registered
+  // by a stranger's wallet through the site.
+  const verdict = evaluate(bundle, { issuer: onchain.issuer });
   if (!verdict.ok && !process.argv.includes("--skip-control-check")) {
     console.error(`\ncontrol not proven: ${verdict.reasons.join("; ")}`);
     console.error(`publish the TXT record from: npm run prove -- ${domain}\n`);

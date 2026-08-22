@@ -8,6 +8,8 @@ export const REGISTRY_ABI = [
   "function timeRemaining(bytes32) view returns (uint64)",
   "function challengeWindow() view returns (uint64)",
   "function getAsset(bytes32) view returns (tuple(address issuer,address verifier,bytes32 kind,bytes32 identifier,uint64 burnTime,uint64 lastAttestedAt,uint64 breakProposedAt,bool contested,bool broken,bool redeemable,bytes32 lastEvidenceHash,bytes32 breakReasonHash,string evidenceURI))",
+  "function computeAssetId(bytes32 kind, bytes32 identifier) pure returns (bytes32)",
+  "function register(bytes32 kind, bytes32 identifier, string evidenceURI) returns (bytes32 assetId)",
 ] as const;
 
 export const TOKEN_ABI = [

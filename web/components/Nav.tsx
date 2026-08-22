@@ -9,6 +9,7 @@ import { CHAIN_ID } from "@/lib/chain";
 const LINKS = [
   { href: "/", label: "Overview" },
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/list", label: "List a domain" },
   { href: "/docs", label: "Docs" },
 ];
 

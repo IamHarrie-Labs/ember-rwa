@@ -1,4 +1,4 @@
-import { Contract, JsonRpcProvider } from "ethers";
+import { Contract, JsonRpcProvider, keccak256, solidityPackedKeccak256, toUtf8Bytes } from "ethers";
 import { REGISTRY_ABI, TOKEN_ABI, ESCROW_ABI, STATES, type StateName } from "./abi";
 
 // Overridable so the same build can point at testnet (968) while it's the only chain with
@@ -52,7 +52,7 @@ export function readProvider() {
   return new JsonRpcProvider(RPC_URL, CHAIN_ID, { staticNetwork: true });
 }
 
-export function registry(runner: JsonRpcProvider) {
+export function registry(runner: any) {
   if (!REGISTRY_ADDRESS) throw new Error("NEXT_PUBLIC_REGISTRY_ADDRESS is not set");
   return new Contract(REGISTRY_ADDRESS, REGISTRY_ABI, runner);
 }
@@ -130,3 +130,19 @@ export async function fetchAsset(id: string): Promise<Asset> {
 
 export const txUrl = (hash: string) => `${EXPLORER}/tx/${hash}`;
 export const addressUrl = (address: string) => `${EXPLORER}/address/${address}`;
+
+/// Mirrors contracts/EmberRegistry.sol's computeAssetId and agent/lib/chain.js exactly —
+/// all three must agree byte-for-byte, since the frontend registers assets the agent and
+/// contract then have to recognize by the same id.
+export const KIND_DOMAIN = keccak256(toUtf8Bytes("domain"));
+export const identifierOf = (domain: string) => keccak256(toUtf8Bytes(domain.toLowerCase()));
+export const assetIdOf = (domain: string) =>
+  solidityPackedKeccak256(["bytes32", "bytes32"], [KIND_DOMAIN, identifierOf(domain)]);
+
+/// The registry only stores keccak256(domain) on-chain — never the plaintext. Self-serve
+/// registration carries the domain back out through evidenceURI, the one free-text field
+/// register() already accepts, so agent/lib/chain.js#discoverDomains can find it later
+/// without a hand-maintained list. Keep this in sync with DOMAIN_URI_PREFIX there.
+export const DOMAIN_URI_PREFIX = "domain:";
+export const controlMessage = (domain: string, issuer: string) =>
+  `ember:${domain.toLowerCase()}:${issuer.toLowerCase()}`;
