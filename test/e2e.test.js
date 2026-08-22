@@ -276,7 +276,10 @@ describe("end to end: cycle, contracts and publisher", function () {
 });
 
 function readHistory() {
-  const p = path.join(process.env.EVIDENCE_DIR, "history.jsonl");
+  // cycle.js scopes the history file per network so mainnet and testnet activity never
+  // land in the same log; NETWORK is unset here, so it falls back to "botchain" same as
+  // cycle.js's own default.
+  const p = path.join(process.env.EVIDENCE_DIR, `history.${process.env.NETWORK || "botchain"}.jsonl`);
   if (!fs.existsSync(p)) return [];
   return fs
     .readFileSync(p, "utf8")
