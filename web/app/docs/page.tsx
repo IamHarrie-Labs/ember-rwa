@@ -58,9 +58,24 @@ const MEASURED = [
 const TOC = [
   ["contract", "The full contract interface"],
   ["grading", "How grading works"],
+  ["listing", "Self-serve listing"],
   ["kill-sequence", "The kill sequence"],
+  ["failure-modes", "Failure modes"],
+  ["compliance", "Compliance posture"],
   ["measured", "Measured, not asserted"],
   ["chain", "Why BOT Chain"],
+] as const;
+
+const FAILURE_ROWS = [
+  ["Primary relayer offline", "Anyone can relay a valid proof and claim the reward. The pool is funded at deploy, so the incentive exists rather than being aspirational."],
+  ["One asset's proof is unusable", "attestMany is atomic, so the batch reverts, then the cycle retries each asset individually. The bad asset fails alone; the rest keep their cycle."],
+  ["Agent clock drifts from chain time", "Observations are timestamped from block.timestamp, not the local clock. Drift over 30s is logged rather than silently producing rejected proofs."],
+  ["All relayers offline", "Assets go out; capital escrows; no wrong state is asserted."],
+  ["DNS resolution unavailable", "No fresh proof; the ember goes out on schedule."],
+  ["Registrar account compromised", "The proof cycle reports the change; it cannot prevent it."],
+  ["AI proposes a false break", "Issuer contests, or a fresh proof dismisses it automatically."],
+  ["Gas pool exhausted", "Same as relayer offline — going out, not false liveness."],
+  ["Chain halted", "State frozen; no asset asserts freshness it does not have."],
 ] as const;
 
 const CHAIN_ROWS = [
@@ -201,6 +216,38 @@ export default function Docs() {
         </p>
       </DocSection>
 
+      <DocSection id="listing" eyebrow="Self-serve listing" title="Nobody holding our keys has to act">
+        <p className="max-w-[42em] text-[15px] leading-[1.65] text-body">
+          Listing an asset does not route through us. At{" "}
+          <Link href="/list" className="border-b border-line text-ink transition-colors ease-brand hover:border-ember hover:text-ember">
+            /list
+          </Link>
+          , a connected wallet signs the control message, gets the exact DNS TXT record to
+          publish, and calls <code className="font-mono text-[13px]">register()</code>{" "}
+          directly — a normal transaction from their own wallet, not a request to an
+          operator.
+        </p>
+        <div className="mt-6 border border-line bg-panel">
+          {[
+            ["1", "Sign", "The owner signs ember:<domain>:<issuer> with their wallet. No account, no software of ours in the loop."],
+            ["2", "Publish", "They publish the signature as a TXT record on their own domain, at their own registrar."],
+            ["3", "Register", "Their wallet calls EmberRegistry.register() directly — permissionless, on-chain, instant."],
+            ["4", "Underwrite automatically", "The agent polls the registry for assets with no burn time set yet and grades them on its next scheduled pass. It does not read from a hardcoded list of assets we chose."],
+          ].map(([n, title, body], i, arr) => (
+            <div
+              key={n}
+              className={`grid grid-cols-[40px_140px_1fr] items-baseline gap-x-4 px-6 py-4 text-sm ${
+                i < arr.length - 1 ? "border-b border-line-soft" : ""
+              }`}
+            >
+              <span className="font-mono text-muted">{n}</span>
+              <span className="font-medium">{title}</span>
+              <span className="text-body">{body}</span>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+
       <DocSection id="kill-sequence" eyebrow="The kill sequence" title="What happens, second by second">
         <p className="max-w-[42em] text-[15px] leading-[1.65] text-body">
           This is the exact sequence a domain asset goes through after its DNS record is deleted,
@@ -226,6 +273,49 @@ export default function Docs() {
             </div>
           ))}
         </div>
+      </DocSection>
+
+      <DocSection id="failure-modes" eyebrow="Failure modes" title="Every failure resolves toward refusing to assert liveness">
+        <p className="max-w-[42em] text-[15px] leading-[1.65] text-body">
+          Never toward asserting it falsely. That is the correct direction for a
+          verification system, and it falls out of decay-by-default rather than being a
+          list of handlers we wrote.
+        </p>
+        <div className="mt-6 border border-line bg-panel">
+          {FAILURE_ROWS.map(([failure, result], i) => (
+            <div
+              key={failure}
+              className={`grid gap-x-6 gap-y-1 px-6 py-4 text-sm sm:grid-cols-[220px_1fr] ${
+                i < FAILURE_ROWS.length - 1 ? "border-b border-line-soft" : ""
+              }`}
+            >
+              <span className="font-medium">{failure}</span>
+              <span className="leading-[1.55] text-body">{result}</span>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+
+      <DocSection id="compliance" eyebrow="Compliance posture" title="What happens when it goes bad, and who decides">
+        <p className="max-w-[42em] text-[15px] leading-[1.65] text-body">
+          The question a regulator or a risk desk asks is not &quot;was it real at
+          issuance&quot; but that one. Ember&apos;s answer is that degradation is
+          mechanical, observable, and non-discretionary — there is no one to pressure and
+          no one to trust for the common case.
+        </p>
+        <p className="mt-5 max-w-[42em] text-[15px] leading-[1.65] text-body">
+          The one discretionary path — a finalized break — is time-delayed, contestable by
+          the issuer inside the challenge window, and economically bonded: anyone can
+          slash the issuer&apos;s bond to the holder once a break is finalized, so the
+          consequence is mechanical rather than a matter of who gets heard.
+        </p>
+        <p className="mt-5 max-w-[42em] text-[15px] leading-[1.65] text-body">
+          What Ember does not claim: it does not verify a domain was legitimately valuable
+          at admission, it does not integrate with a registrar to move the underlying
+          asset, and its one remaining trusted role — the arbiter for contested breaks —
+          is named on this page rather than hidden. A staked jury replacing that role is on
+          the roadmap.
+        </p>
       </DocSection>
 
       <DocSection id="measured" eyebrow="Measured, not asserted" title="Real numbers, reproducible from the repository">
