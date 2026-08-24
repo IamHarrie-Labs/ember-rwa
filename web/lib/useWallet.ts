@@ -86,7 +86,16 @@ export function useWallet() {
     }
   }, []);
 
+  // Injected wallets have no real "disconnect" — the extension owns that permission, not
+  // the site. This clears our own state so the UI stops treating the wallet as connected;
+  // the extension itself still shows the site as authorized until revoked there, same as
+  // every other dapp built on window.ethereum.
+  const disconnect = useCallback(() => {
+    setAddress(null);
+    setError(null);
+  }, []);
+
   const onRightChain = !!chainId && chainId.toLowerCase() === CHAIN_ID_HEX;
 
-  return { address, chainId, onRightChain, hasWallet, busy, error, setError, connect, switchChain };
+  return { address, chainId, onRightChain, hasWallet, busy, error, setError, connect, switchChain, disconnect };
 }

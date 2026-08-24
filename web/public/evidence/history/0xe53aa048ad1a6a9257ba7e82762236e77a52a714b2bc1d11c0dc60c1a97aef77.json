@@ -1,7 +1,33 @@
 {
   "assetId": "0xe53aa048ad1a6a9257ba7e82762236e77a52a714b2bc1d11c0dc60c1a97aef77",
-  "updatedAt": "2026-08-24T07:55:19.006Z",
+  "updatedAt": "2026-08-24T09:40:26.858Z",
   "timeline": [
+    {
+      "at": "2026-08-24T09:27:01.656Z",
+      "observedAt": 1787563613,
+      "verdict": "no proof",
+      "reasons": [
+        "RDAP unavailable"
+      ],
+      "evidenceHash": "0xbf9fe4406a0f0602146a99468c4e26c2c6bbbae7723acc86b06f0c46ecbf5c49",
+      "txHash": null,
+      "block": null,
+      "gasUsed": null,
+      "batchSize": null
+    },
+    {
+      "at": "2026-08-24T09:10:07.322Z",
+      "observedAt": 1787562599,
+      "verdict": "no proof",
+      "reasons": [
+        "RDAP unavailable"
+      ],
+      "evidenceHash": "0x8cc09be338aeac6f5614ae475fc8d1984042b99f8a067b811db99f2dfd765f0c",
+      "txHash": null,
+      "block": null,
+      "gasUsed": null,
+      "batchSize": null
+    },
     {
       "at": "2026-08-24T04:52:42.728Z",
       "observedAt": 1787547157,
@@ -434,28 +460,6 @@
       "txHash": "0x7076724d631e7b345f5bdc178ea53faf13c4aeb951883bc6514dca0bb1f49de9",
       "block": 20581850,
       "gasUsed": "94018",
-      "batchSize": 2
-    },
-    {
-      "at": "2026-08-22T17:36:12.962Z",
-      "observedAt": 1787420168,
-      "verdict": "valid",
-      "reasons": null,
-      "evidenceHash": "0x92a7b3bdb3f045d0ce02ade1c47d0ef8b6c91909ae1221beac7a2d768006e6fc",
-      "txHash": "0x9e7a0f6b0484701ea4f0c7fc4dbb928a87eec44747a41fef670e09e042d57b57",
-      "block": 20581747,
-      "gasUsed": "94018",
-      "batchSize": 2
-    },
-    {
-      "at": "2026-08-22T17:34:43.769Z",
-      "observedAt": 1787420080,
-      "verdict": "valid",
-      "reasons": null,
-      "evidenceHash": "0x4df1e15e6057dd89900b3dfab8eec9084999374cb1e5450100b48e66c058ebb0",
-      "txHash": "0x1f7c32a1dd7a8584ac1995d39881d65e90edcbc81567a1ff58d7af3a445c1167",
-      "block": 20581629,
-      "gasUsed": "93994",
       "batchSize": 2
     }
   ]

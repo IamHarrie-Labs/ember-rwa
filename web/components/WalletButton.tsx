@@ -4,7 +4,7 @@ import { useWallet } from "@/lib/useWallet";
 import { shortAddress } from "@/lib/format";
 
 export function WalletButton() {
-  const { address, onRightChain, hasWallet, busy, error, connect, switchChain } = useWallet();
+  const { address, onRightChain, hasWallet, busy, error, connect, switchChain, disconnect } = useWallet();
 
   // Square, mono, hairline — the design's chip, not a rounded app button.
   const base =
@@ -54,9 +54,19 @@ export function WalletButton() {
   }
 
   return (
-    <span className={`${base} border-line bg-panel`}>
-      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ember" />
-      <span className="tnum">{shortAddress(address)}</span>
-    </span>
+    <div className="flex items-center gap-1.5">
+      <span className={`${base} border-line bg-panel`}>
+        <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ember" />
+        <span className="tnum">{shortAddress(address)}</span>
+      </span>
+      <button
+        onClick={disconnect}
+        title="Disconnect"
+        aria-label="Disconnect wallet"
+        className={`${base} border-line px-2.5 text-muted hover:border-danger hover:text-danger`}
+      >
+        ✕
+      </button>
+    </div>
   );
 }

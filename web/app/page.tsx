@@ -12,8 +12,6 @@ export default function Overview() {
       <NoAdminKey />
       <HowItWorks />
       <GradeTable />
-      <KillSequence />
-      <DoesNotDo />
       <Roadmap />
     </>
   );
@@ -280,79 +278,7 @@ function GradeTable() {
 
 /* ------------------------------------------------------- kill sequence */
 
-function KillSequence() {
-  return (
-    <section className="border-b border-line bg-wash">
-      <div className="mx-auto max-w-shell px-4 py-20 sm:px-8">
-        <p className="eyebrow mb-6">The kill sequence</p>
-        <h2 className="max-w-[26em] text-[30px] font-bold leading-[1.05] tracking-[-0.03em] sm:text-[38px]">
-          Delete the DNS record and watch it go out.
-        </h2>
-        <p className="mt-[22px] max-w-[42em] text-pretty text-base leading-[1.6] text-body">
-          On Demo Day we delete that record for real, live, in a DNS console — no simulate
-          button, because the claim being made is that there is no privileged way to freeze an
-          asset.
-        </p>
-        <Link
-          href="/docs#kill-sequence"
-          className="mt-5 inline-block border-b border-line font-mono text-xs text-ink transition-colors ease-brand hover:border-ember hover:text-ember"
-        >
-          See the full second-by-second timeline ↗
-        </Link>
-      </div>
-    </section>
-  );
-}
-
 /* --------------------------------------------------- what it does not do */
-
-const LIMITS = [
-  [
-    "It cannot move the domain",
-    "A token is a claim on a domain we continuously check, not the domain itself. An issuer bond backs that claim.",
-  ],
-  [
-    "No marketplace yet",
-    "Assets transfer directly. Buy is disabled in the interface until that contract exists.",
-  ],
-  [
-    "Verifiers are allowlisted for now",
-    "Anyone can submit a proof, but only approved verifiers can sign one — an open set is on the roadmap.",
-  ],
-  [
-    "One arbiter decides contested breaks",
-    "The one trusted role left in the system today, named rather than hidden. A staked jury is planned.",
-  ],
-  [
-    "Model output is an estimate, not an appraisal",
-    "Every underwriting memo cites the evidence behind it, so a reader can check it and disagree.",
-  ],
-  [
-    "DNS is the root of trust",
-    "If a registrar account is compromised, we report the change. We cannot prevent it happening.",
-  ],
-];
-
-function DoesNotDo() {
-  return (
-    <section className="border-b border-line bg-ink text-paper">
-      <div className="mx-auto max-w-shell px-4 py-20 sm:px-8">
-        <p className="eyebrow mb-8 !text-[#8A8A82]">What Ember does not do</p>
-        <h2 className="mb-11 max-w-[24em] text-[28px] font-bold leading-[1.1] tracking-[-0.03em] sm:text-[34px]">
-          The limits are on this page, not buried in a footnote.
-        </h2>
-        <div className="grid gap-px border border-ink-line bg-ink-line md:grid-cols-2 lg:grid-cols-3">
-          {LIMITS.map(([title, body]) => (
-            <div key={title} className="bg-ink px-6 py-[26px]">
-              <div className="mb-2.5 text-base font-medium">{title}</div>
-              <div className="text-sm leading-[1.6] text-[#A8A8A0]">{body}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ------------------------------------------------------------- roadmap */
 
