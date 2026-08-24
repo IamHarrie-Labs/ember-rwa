@@ -12,62 +12,110 @@ a chatbot bolted onto the front end.
 
 [**Live site**](https://ember-rwa.vercel.app) · [Dashboard](https://ember-rwa.vercel.app/dashboard) · [Docs](https://ember-rwa.vercel.app/docs) · [List an asset](https://ember-rwa.vercel.app/list) · [Explorer](https://scan.botchain.ai)
 
+![How proof becomes state, and state becomes trust](docs-assets/architecture.png)
+
 ---
 
-## The invariant
+## The core idea
 
-> **No asset may trade unless its supporting evidence is still fresh.**
+Most real-world asset tokens work like this: someone verifies an asset once, mints a
+token, and then the token keeps trading indefinitely, even if the asset is no longer
+valid. A domain token could keep trading months after the domain has expired, because
+nobody is checking it again.
 
-Contracts, state machine, proof cycle, AI, revenue, redemption — everything in this
-repository is a consequence of that one line.
+Ember takes a different approach. Every asset has to keep proving that it is still valid.
+If the proof stops, the asset eventually stops trading automatically. There is no admin
+who can freeze it — the contract does not even have a freeze function. Its state is
+determined by simple math: how long it has been since the last valid proof. No proof
+means no fresh state, and the asset eventually becomes untradable.
 
-## The problem
+## The lifecycle of an asset
 
-Every RWA token in existence is a photograph of a verification that happened once. An
-issuer checks a deed, an invoice, a registry entry — once, at mint — then mints a token
-asserting "this is real." From that moment the token is a claim about the past. The
-domain expires. The revenue stream dies. The registry entry is revoked. The token keeps
-trading, still asserting a fact that stopped being true months ago.
+**1. Prove you own it.** Right now Ember uses domains, because ownership can be checked
+publicly through DNS. You sign a message with your wallet —
+`ember:yourdomain.com:0xYourAddress` — and publish that signature as a DNS TXT record on
+your domain. Anyone can verify it themselves with `dig` and `ethers.verifyMessage` to
+confirm you control both the domain and the wallet. No Ember account needed.
 
-The industry's answer is a quarterly PDF from an auditor and an admin key that can freeze
-things if somebody notices. That is not verification — it is trust with a longer feedback
-loop. Ember asks a different question: not "was this asset ever real?" but **"is it still
-real right now, and what happens the moment it isn't?"**
+**2. Register it on-chain.** Your wallet calls the registry contract directly and pays the
+gas. There is no approval process — anyone can register an asset.
 
-## How it works
+**3. AI underwrites it.** This is currently the only gate. A model looks at deterministic
+facts about the domain — age, expiry date, DNS configuration, HTTP reachability — and
+grades it A through E. That grade maps to a public table that sets the asset's burn time:
+how long a single proof keeps it fresh. An old, stable domain might get six hours; a
+brand-new one might get ninety seconds. A second model reviews the first grade and can
+only make it stricter, never more lenient. Once this runs, the burn time is written
+on-chain and an NFT representing the asset is minted.
 
-State is a pure function of time since the last valid proof. There is no flag to flip:
+**4. Keep proving it.** A background process rechecks the DNS record on a schedule and
+submits a new proof on-chain when it succeeds. Anyone can submit these proofs and earn a
+small reward, so Ember does not depend entirely on its own relayer — if it goes offline,
+someone else can keep the system alive.
+
+**5. Let time determine the state.** The contract runs one calculation:
 
 ```
-state(asset) =
-    if   redeemable                      -> Redeemable
-    elif broken                          -> Broken
-    elif age <= burnTime                 -> Live
-    elif age <= 2 * burnTime             -> Degraded
-    else                                 -> Stale
+age = now - lastProofTime
 
-where age = block.timestamp - lastAttestedAt
+if   age <= burnTime      -> Live       (trades normally)
+elif age <= burnTime * 2  -> Degraded   (trades, flagged)
+else                      -> Stale      (transfers blocked)
 ```
 
-`burnTime` is how long a single proof carries the asset, set once at admission by an AI
-underwriter reading deterministic evidence. Past it, the asset trades flagged. Past twice
-it, transfers revert, revenue escrows, and redemption opens — with nobody deciding that in
-the moment.
+Nobody flips a switch. If the proof stops — the DNS record was deleted, the domain
+expired, the relayer went offline — the asset simply gets older until it crosses the
+deadline and stops being tradable. That's the entire mechanism.
 
-1. **Prove ownership** — the owner signs `ember:<domain>:<issuer>` and publishes it as a
-   DNS TXT record. Verifiable by anyone with `dig` and `ethers.verifyMessage`, no software
-   of ours required.
-2. **Underwrite** — two AI models run in sequence: one grades the evidence A–E, the other
-   argues the grade down and can never argue it up. The grade sets the burn time from a
-   fixed public table.
-3. **Verify on schedule** — a background process rechecks the record and writes proof
-   on-chain. Submission is permissionless and rewarded, so the protocol does not brick if
-   one relayer goes offline.
-4. **Let time do the rest** — no proof, no state to maintain. The asset stops trading on
-   its own.
+## What happens when an asset goes bad
 
-Full architecture, the facts-vs-judgment separation, verifier design, and the economic
-backstop are written up in [`PROJECT.md`](PROJECT.md).
+Once an asset is Stale, its transfers revert — the NFT cannot move. Any revenue held in
+escrow for it stops paying out to the holder and stays locked.
+
+If someone believes the asset is not just stale but actually **Broken** — the domain was
+hijacked, turned into a scam page — they can formally propose that. It goes through a
+contestable window before it can be finalized. If it is finalized broken, the issuer's
+bond is slashed to the holder of the now-worthless token, who can redeem it to release
+whatever revenue was sitting in escrow.
+
+Verification detects the problem. The bond and escrow are what provide the compensation —
+those are two different jobs, done by two different mechanisms.
+
+## The five contracts
+
+- **EmberRegistry** — the brain. Tracks every asset and derives its state with pure math.
+  No freeze, no pause.
+- **SignedAttestationVerifier** — checks that a submitted proof carries a valid signature
+  from an approved verifier and isn't too old to replay.
+- **AssetToken** — an ERC-721. Its transfer function checks the registry first and
+  reverts if the asset isn't fresh. That check is the entire enforcement mechanism.
+- **IssuerBond** — collateral posted at admission, slashable to the holder if the asset is
+  finalized broken.
+- **RevenueEscrow** — holds revenue an asset earns (parking, lease income). Claimable by
+  the holder while fresh; held otherwise.
+
+## Where trust actually sits
+
+Ember is not fully decentralized yet, and that's worth being clear about.
+
+The **underwriter** role — who can admit assets and set their burn times — currently
+relies on one key. The **verifier signing key** is allowlisted: anyone can submit a proof,
+but only approved verifiers can currently sign one. There is also **one arbiter** handling
+contested broken claims instead of a jury.
+
+These are known limitations, not hidden ones. The plan is a staked, open verifier set and
+a jury system — pieces that haven't been rushed before they can be built safely.
+
+## Why BOT Chain
+
+The system depends on proofs being submitted on schedule. On a normal EIP-1559 chain, gas
+prices move unpredictably — if gas spikes and a proof gets missed, the chain can't tell
+the difference between an asset that genuinely went bad and one whose proof was simply too
+expensive to submit that minute.
+
+BOT Chain runs a flat 20 gwei fee with no base fee, removing that auction entirely. Blocks
+land roughly every 0.75 seconds, so a state change is reflected almost immediately rather
+than rounded to a slower chain's block time.
 
 ## Deployed on BOT Chain Mainnet
 
@@ -123,10 +171,6 @@ shipped.
 
 - **No registrar integration.** A token is a claim on a continuously monitored asset, not
   automated transfer of the domain itself. An issuer bond is the economic substitute.
-- **Verifiers are allowlisted for now.** Submission is permissionless; signing is not. A
-  staked, open verifier set is on the roadmap.
-- **One arbiter decides contested breaks today.** The one remaining trusted role, named
-  rather than hidden. A staked jury is planned.
 - **No secondary marketplace.** Assets transfer directly; there is no listing contract yet.
 - **Model output is an estimate, not an appraisal.** Every memo cites the evidence it
   relied on so a reader can check it and disagree.
@@ -144,6 +188,7 @@ scripts/         deploy.js, keys.js, gas.js
 test/            53 tests: contracts, evidence, grading, underwriting, full e2e harness
 web/             Next.js frontend — landing page, dashboard, asset detail, self-serve /list, /docs
 deployments/     addresses written by scripts/deploy.js, one file per network
+docs-assets/     architecture.png
 PROJECT.md       full architecture writeup
 ```
 
@@ -203,6 +248,16 @@ deployed contracts — none of it is a projection.
 | Block time | 0.75s, measured over 20 blocks |
 | Tests | 53, all passing — contracts, agent, and full end-to-end |
 | Admin functions that can pause, freeze, or extend an asset's clock | 0 |
+
+## The idea worth remembering
+
+Most RWA projects ask you to trust their verification. Ember asks you to verify it
+yourself: check the DNS record with `dig`, check the signature with
+`ethers.verifyMessage`, check the contract state on the explorer.
+
+The AI's role is deliberately narrow. It decides how often an asset needs to prove itself,
+once, at admission. After that, it does not decide whether the asset is fresh — time and
+on-chain math do, and anyone can check the answer without asking permission.
 
 ## License
 
