@@ -6,7 +6,11 @@ const { evidenceHash } = require("./canonical");
 // evidence a third party reproduces is the evidence we saw.
 const RESOLVERS = ["1.1.1.1", "8.8.8.8"];
 const TXT_PREFIX = "ember=";
-const HTTP_TIMEOUT_MS = 8000;
+// Measured 2026-08-24: rdap.org's redirect chain alone can take ~6.4s, which was flapping
+// assets to Stale on marginal timing rather than genuine unavailability. 8s left almost no
+// margin; 15s gives real-world RDAP latency room without weakening fail-closed behavior --
+// a request that's actually down still times out and still produces Stale, correctly.
+const HTTP_TIMEOUT_MS = 15000;
 
 function resolver() {
   const r = new dns.promises.Resolver({ timeout: 5000, tries: 2 });
