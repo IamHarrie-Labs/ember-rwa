@@ -63,7 +63,7 @@ export default function ListPage() {
       if (!res.ok) throw new Error(body.error || "Lookup failed");
       const records: string[] = body.records || [];
       if (!records.includes(record)) {
-        throw new Error("That TXT record isn't showing up yet — DNS can take a few minutes to propagate. Try again shortly.");
+        throw new Error("That TXT record isn't showing up yet. DNS can take a few minutes to propagate. Try again shortly.");
       }
       setStep("register");
     } catch (e) {
@@ -104,14 +104,14 @@ export default function ListPage() {
         </h1>
         <p className="mt-5 text-pretty text-[17px] leading-[1.6] text-body">
           Three steps: sign a message with your wallet, publish it as a DNS record, then
-          register on-chain yourself. Underwriting runs automatically on the next cycle —
-          typically within a few minutes.
+          register on-chain yourself. The underwriter grades and admits registered assets
+          by hand, not on a timer, so admission can take longer than the steps above.
         </p>
       </header>
 
       {!wallet.address ? (
         <div className="max-w-[32em] border border-dashed border-line p-8 text-[15px] leading-relaxed text-muted">
-          Connect a wallet to start. That wallet becomes the issuer — the only address that
+          Connect a wallet to start. That wallet becomes the issuer, the only address that
           can register this domain and later redeem or claim revenue against it.
           <button
             onClick={wallet.connect}
@@ -181,11 +181,11 @@ export default function ListPage() {
                       disabled={busy}
                       className="border border-ink px-5 py-2.5 text-[13px] font-medium text-ink transition-colors ease-brand hover:bg-ink hover:text-paper disabled:opacity-60"
                     >
-                      {busy ? "Checking…" : "I've published it — verify"}
+                      {busy ? "Checking…" : "I've published it, verify"}
                     </button>
                   )}
                   {(step === "register" || step === "done") && (
-                    <p className="text-[14px] text-muted">Verified — the record matches your signature.</p>
+                    <p className="text-[14px] text-muted">Verified: the record matches your signature.</p>
                   )}
                 </>
               )}

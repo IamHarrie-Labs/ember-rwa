@@ -127,7 +127,7 @@ export function AssetView({ id }: { id?: string }) {
 
 const clock = (iso: string) => {
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleTimeString("en-GB", { hour12: false });
+  return Number.isNaN(d.getTime()) ? "-" : d.toLocaleTimeString("en-GB", { hour12: false });
 };
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -316,7 +316,7 @@ function Headline({ sel }: { sel: Derived }) {
           <dl className="border-t border-line-soft pt-5 font-mono text-xs leading-[2] text-body">
             <Row k="issuer" v={sel.issuer} />
             <Row k="verifier" v="SignedAttestationVerifier" />
-            <Row k="evidence" v={sel.memo?.evidenceHash ? short(sel.memo.evidenceHash, 10, 6) : "—"} />
+            <Row k="evidence" v={sel.memo?.evidenceHash ? short(sel.memo.evidenceHash, 10, 6) : "-"} />
           </dl>
           {!memo && (
             <p className="mt-4 text-xs leading-relaxed text-out">
@@ -411,7 +411,7 @@ function RawState({ sel, timeline }: { sel: Derived; timeline: TimelineRow[] | n
                       {r.evidenceHash ? (
                         `evidence ${short(r.evidenceHash, 10, 4)}`
                       ) : (
-                        <span className="text-muted">{r.reasons?.join("; ") ?? "—"}</span>
+                        <span className="text-muted">{r.reasons?.join("; ") ?? "-"}</span>
                       )}
                     </span>
                     <span
@@ -476,11 +476,11 @@ function Underwriting({ sel, memo }: { sel: Derived; memo: Memo | null }) {
                 <div className="mb-4 flex items-baseline justify-between gap-3">
                   <span className="text-lg font-bold">Underwriter memo</span>
                   <span className="font-mono text-xs text-muted">
-                    proposed grade {uw?.grade ?? "—"}
+                    proposed grade {uw?.grade ?? "-"}
                   </span>
                 </div>
                 <p className="text-pretty text-[15px] leading-[1.65] text-body">
-                  {uw?.memo ?? "—"}
+                  {uw?.memo ?? "-"}
                 </p>
               </div>
 
@@ -488,7 +488,7 @@ function Underwriting({ sel, memo }: { sel: Derived; memo: Memo | null }) {
                 <div className="mb-4 flex items-baseline justify-between gap-3">
                   <span className="text-lg font-bold">Adversarial critique</span>
                   <span className="font-mono text-xs text-ember-deep">
-                    recommends {adv?.gradeShouldBe ?? "—"}
+                    recommends {adv?.gradeShouldBe ?? "-"}
                   </span>
                 </div>
                 <p className="text-pretty text-[15px] leading-[1.65] text-body">
@@ -523,15 +523,15 @@ function Underwriting({ sel, memo }: { sel: Derived; memo: Memo | null }) {
               <div className="grid gap-7 font-mono text-[12.5px] leading-[1.9] sm:grid-cols-3">
                 <div>
                   <span className="block text-muted">model</span>
-                  {prov?.model ?? memo.engine ?? "—"}
+                  {prov?.model ?? memo.engine ?? "-"}
                 </div>
                 <div>
                   <span className="block text-muted">prompt hash</span>
-                  {prov?.promptHash ? short(prov.promptHash, 8, 6) : "—"}
+                  {prov?.promptHash ? short(prov.promptHash, 8, 6) : "-"}
                 </div>
                 <div>
                   <span className="block text-muted">output hash</span>
-                  {prov?.outputHash ? short(prov.outputHash, 8, 6) : "—"}
+                  {prov?.outputHash ? short(prov.outputHash, 8, 6) : "-"}
                 </div>
               </div>
               <p className="mt-[18px] border-t border-line-soft pt-4 text-[13px] leading-[1.6] text-muted">

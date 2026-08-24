@@ -70,7 +70,7 @@ export function indexToMemo(assetId: string, e: IndexEntry): Memo {
   return {
     assetId,
     domain: e.domain ?? "",
-    grade: e.grade ?? "—",
+    grade: e.grade ?? "-",
     burnTime: e.burnTime ?? 0,
     engine: e.engine ?? "",
     evidenceHash: e.evidenceHash ?? "",

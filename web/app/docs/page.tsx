@@ -67,14 +67,14 @@ const TOC = [
 ] as const;
 
 const FAILURE_ROWS = [
-  ["Primary relayer offline", "Anyone can submit a valid proof — the registry checks the proof, never the sender. The reward that pays a third-party relayer is live in the contract and tested, but the mainnet pool is not capitalized yet, so relaying today is altruistic rather than paid."],
+  ["Primary relayer offline", "Anyone can submit a valid proof. The registry checks the proof, never the sender. The reward that pays a third-party relayer is live in the contract and tested, but the mainnet pool is not capitalized yet, so relaying today is altruistic rather than paid."],
   ["One asset's proof is unusable", "attestMany is atomic, so the batch reverts, then the cycle retries each asset individually. The bad asset fails alone; the rest keep their cycle."],
   ["Agent clock drifts from chain time", "Observations are timestamped from block.timestamp, not the local clock. Drift over 30s is logged rather than silently producing rejected proofs."],
   ["All relayers offline", "Assets go out; capital escrows; no wrong state is asserted."],
   ["DNS resolution unavailable", "No fresh proof; the ember goes out on schedule."],
   ["Registrar account compromised", "The proof cycle reports the change; it cannot prevent it."],
   ["AI proposes a false break", "Issuer contests, or a fresh proof dismisses it automatically."],
-  ["Gas pool exhausted", "Same as relayer offline — going out, not false liveness."],
+  ["Gas pool exhausted", "Same as relayer offline: going out, not false liveness."],
   ["Chain halted", "State frozen; no asset asserts freshness it does not have."],
 ] as const;
 
@@ -224,15 +224,15 @@ export default function Docs() {
           </Link>
           , a connected wallet signs the control message, gets the exact DNS TXT record to
           publish, and calls <code className="font-mono text-[13px]">register()</code>{" "}
-          directly — a normal transaction from their own wallet, not a request to an
+          directly: a normal transaction from their own wallet, not a request to an
           operator.
         </p>
         <div className="mt-6 border border-line bg-panel">
           {[
             ["1", "Sign", "The owner signs ember:<domain>:<issuer> with their wallet. No account, no software of ours in the loop."],
             ["2", "Publish", "They publish the signature as a TXT record on their own domain, at their own registrar."],
-            ["3", "Register", "Their wallet calls EmberRegistry.register() directly — permissionless, on-chain, instant."],
-            ["4", "Await admission", "The proof cycle discovers the asset on-chain by reading the registry, not a hardcoded list, and reports it as awaiting underwriting. Grading itself is still run manually by the underwriter — see the note below."],
+            ["3", "Register", "Their wallet calls EmberRegistry.register() directly: permissionless, on-chain, instant."],
+            ["4", "Await admission", "The proof cycle discovers the asset on-chain by reading the registry, not a hardcoded list, and reports it as awaiting underwriting. Grading itself is still run manually by the underwriter. See the note below."],
           ].map(([n, title, body], i, arr) => (
             <div
               key={n}
@@ -252,7 +252,7 @@ export default function Docs() {
           the underwriter still runs grading by hand before an asset gets a burn time and
           becomes tradable. That gate is deliberate: unattended admission would let anyone
           register arbitrary domains and spend the underwriter&apos;s gas and model budget
-          at will. Opening it up needs a fee or a stake to make abuse expensive — roadmap,
+          at will. Opening it up needs a fee or a stake to make abuse expensive. Roadmap,
           not shipped.
         </p>
       </DocSection>
@@ -309,11 +309,11 @@ export default function Docs() {
         <p className="max-w-[42em] text-[15px] leading-[1.65] text-body">
           The question a regulator or a risk desk asks is not &quot;was it real at
           issuance&quot; but that one. Ember&apos;s answer is that degradation is
-          mechanical, observable, and non-discretionary — there is no one to pressure and
+          mechanical, observable, and non-discretionary. There is no one to pressure and
           no one to trust for the common case.
         </p>
         <p className="mt-5 max-w-[42em] text-[15px] leading-[1.65] text-body">
-          The one discretionary path — a finalized break — is time-delayed, contestable by
+          The one discretionary path, a finalized break, is time-delayed, contestable by
           the issuer inside the challenge window, and economically bonded: anyone can
           slash the issuer&apos;s bond to the holder once a break is finalized, so the
           consequence is mechanical rather than a matter of who gets heard.
@@ -321,7 +321,7 @@ export default function Docs() {
         <p className="mt-5 max-w-[42em] text-[15px] leading-[1.65] text-body">
           What Ember does not claim: it does not verify a domain was legitimately valuable
           at admission, it does not integrate with a registrar to move the underlying
-          asset, and its one remaining trusted role — the arbiter for contested breaks —
+          asset, and its one remaining trusted role, the arbiter for contested breaks,
           is named on this page rather than hidden. A staked jury replacing that role is on
           the roadmap.
         </p>

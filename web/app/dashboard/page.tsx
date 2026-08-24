@@ -148,7 +148,7 @@ export default function Dashboard() {
 
         <p className="mt-5 border-t border-line-soft pt-5 text-[13px] leading-[1.6] text-muted">
           If the primary relayer stops, this panel stops advancing before the assets start going
-          out. Anyone can then submit a valid signed proof — the registry checks the proof, never
+          out. Anyone can then submit a valid signed proof. The registry checks the proof, never
           the sender. The reward that would pay a third-party relayer is implemented and tested,
           but the mainnet pool is not capitalized yet, so relaying is currently unpaid.
         </p>
@@ -159,7 +159,7 @@ export default function Dashboard() {
 
 const clockOf = (iso: string) => {
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleTimeString("en-GB", { hour12: false });
+  return Number.isNaN(d.getTime()) ? "-" : d.toLocaleTimeString("en-GB", { hour12: false });
 };
 
 /// Gas is published as a raw unit count. At BOT Chain's flat 20 gwei this is the only
@@ -168,7 +168,7 @@ const gasBot = (gas: string) => {
   try {
     return (Number(BigInt(gas) * 20n) / 1e9).toFixed(4);
   } catch {
-    return "—";
+    return "-";
   }
 };
 

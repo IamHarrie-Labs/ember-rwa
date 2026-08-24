@@ -28,12 +28,12 @@ function Hero() {
         <div className="border-line pb-16 pt-24 lg:border-r lg:pb-16 lg:pr-14 lg:pt-32">
           <p className="eyebrow mb-9">A verification layer for real-world assets</p>
           <h1 className="text-balance text-[44px] font-bold leading-[0.96] tracking-[-0.035em] sm:text-[68px]">
-            An ember dies unless it is fed.
+            An ember dies <span className="accent">unless it is fed.</span>
           </h1>
           <p className="mt-8 max-w-[30em] text-pretty text-[19px] leading-[1.5] text-body">
             Every asset on Ember has to keep proving it&apos;s still valid. As long as the
-            proof stays fresh, it keeps trading. If the proof expires,{" "}
-            <span className="accent">trading stops on its own</span>.
+            proof stays fresh, it keeps trading. If the proof expires, trading stops on its
+            own.
           </p>
 
           <div className="mt-10 flex max-w-[34em] items-start gap-[18px] border border-ink px-6 py-5">
@@ -140,7 +140,7 @@ function NoAdminKey() {
             There is <span className="accent">no admin key</span> on this contract.
           </h2>
           <p className="mt-6 max-w-[34em] text-pretty text-base leading-[1.6] text-[#B4B4AC]">
-            Nobody, including us, can pause an asset, freeze it, or extend its clock — the
+            Nobody, including us, can pause an asset, freeze it, or extend its clock. The
             contract has no function that does that. Anyone can confirm it by reading the
             deployed code.
           </p>
@@ -194,7 +194,7 @@ const STEPS = [
   {
     n: "03",
     title: "Let time do the rest",
-    body: "Once too long passes without a fresh proof, the asset stops trading on its own. Nobody decides that in the moment — it was set the day the asset was admitted.",
+    body: "Once too long passes without a fresh proof, the asset stops trading on its own. Nobody decides that in the moment. It was set the day the asset was admitted.",
   },
 ];
 
@@ -240,7 +240,7 @@ function GradeTable() {
           </h2>
           <p className="mt-[22px] text-pretty text-base leading-[1.6] text-[#B4B4AC]">
             A second model checks the first one&apos;s work and can only argue the grade down,
-            never up — a disagreement can only shorten how long an asset gets before it needs
+            never up. A disagreement can only shorten how long an asset gets before it needs
             fresh evidence again.
           </p>
           <Link
