@@ -1,14 +1,14 @@
 {
-  "updatedAt": "2026-08-22T21:32:08.482Z",
+  "updatedAt": "2026-08-24T05:02:27.656Z",
   "cycle": {
-    "lastAttestAt": "2026-08-22T18:06:28.828Z",
-    "attestations": 75,
-    "assetAttestations": 138,
-    "failures": 30,
-    "submissionFailures": 285,
+    "lastAttestAt": "2026-08-24T04:52:42.728Z",
+    "attestations": 86,
+    "assetAttestations": 159,
+    "failures": 62,
+    "submissionFailures": 1132,
     "last24h": {
-      "gas": "6708234",
-      "transactions": 75
+      "gas": "1002800",
+      "transactions": 11
     }
   },
   "assets": {
@@ -20,8 +20,8 @@
       "evidenceHash": "0xf5c2d0c84865689c4090d39ac7fb92cf598ac487524db7e8c811f115afb8b729",
       "memo": "memos/0xe4e35412499f2b3a9810d0108e9b432141ccc87a79a42a345101400c64f0a896.json",
       "history": "history/0xe4e35412499f2b3a9810d0108e9b432141ccc87a79a42a345101400c64f0a896.json",
-      "attestations": 68,
-      "lastAttestAt": "2026-08-22T18:06:28.826Z"
+      "attestations": 78,
+      "lastAttestAt": "2026-08-24T04:52:42.725Z"
     },
     "0xe53aa048ad1a6a9257ba7e82762236e77a52a714b2bc1d11c0dc60c1a97aef77": {
       "domain": "usebeni.xyz",
@@ -31,8 +31,8 @@
       "evidenceHash": "0x1d8c5159add327fe02eb0398139e3a81d3b241d18cf66e37fe088f2a1d7014a6",
       "memo": "memos/0xe53aa048ad1a6a9257ba7e82762236e77a52a714b2bc1d11c0dc60c1a97aef77.json",
       "history": "history/0xe53aa048ad1a6a9257ba7e82762236e77a52a714b2bc1d11c0dc60c1a97aef77.json",
-      "attestations": 70,
-      "lastAttestAt": "2026-08-22T18:06:28.828Z"
+      "attestations": 81,
+      "lastAttestAt": "2026-08-24T04:52:42.728Z"
     }
   }
 }
