@@ -61,9 +61,13 @@
     color: var(--muted);
   }
 
-  /* Plain-language emphasis inside prose: italic, not bold, and never more than the accent color. */
+  /* Plain-language emphasis inside prose: a distinct display-serif italic, not the body
+     font tilted, so a word of emphasis reads as its own gesture rather than a style toggle.
+     Used sparingly — a phrase per section, never a heading or a full sentence. */
   .accent {
+    font-family: var(--font-serif-accent), ui-serif, Georgia, serif;
     font-style: italic;
+    font-weight: 600;
     color: var(--ember-deep);
   }
 

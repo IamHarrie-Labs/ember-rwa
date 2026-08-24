@@ -31,10 +31,9 @@ function Hero() {
             An ember dies unless it is fed.
           </h1>
           <p className="mt-8 max-w-[30em] text-pretty text-[19px] leading-[1.5] text-body">
-            Every tokenized asset on Ember stays tradable only while its evidence is{" "}
-            <span className="accent">fresh</span>. Renew that evidence and it keeps trading.
-            Stop, and it stops. Nobody has to step in and turn it off. The permission to trade
-            simply runs out on its own.
+            Every asset on Ember has to keep proving it&apos;s still valid. As long as the
+            proof stays fresh, it keeps trading. If the proof expires,{" "}
+            <span className="accent">trading stops on its own</span>.
           </p>
 
           <div className="mt-10 flex max-w-[34em] items-start gap-[18px] border border-ink px-6 py-5">
@@ -310,17 +309,30 @@ const ROADMAP = [
   ],
 ];
 
+/// A CSS-only stacking scroll: sibling `sticky` cards with increasing `top` offsets pin in
+/// place one after another as the page scrolls, each new card sliding up to cover the last.
+/// No JS, no scroll-jacking — it's still native scroll, just sticky positioning doing the
+/// work, so it degrades to a plain list if anything about the layout breaks.
 function Roadmap() {
   return (
     <section className="bg-wash">
       <div className="mx-auto max-w-shell px-4 py-20 sm:px-8">
         <p className="eyebrow mb-9">Roadmap</p>
-        <div className="rule-grid sm:grid-cols-2 lg:grid-cols-5">
-          {ROADMAP.map(([tag, title, body]) => (
-            <div key={title} className="bg-paper px-[22px] py-[26px]">
-              <div className="mb-3 font-mono text-[11px] text-muted">{tag}</div>
-              <div className="mb-2.5 text-base font-medium leading-[1.3]">{title}</div>
-              <div className="text-[13px] leading-[1.6] text-muted">{body}</div>
+        <div className="relative">
+          {ROADMAP.map(([tag, title, body], i) => (
+            <div
+              key={title}
+              className="sticky mb-4 border border-line bg-paper px-8 py-8 sm:px-10 sm:py-9"
+              style={{ top: `${88 + i * 14}px`, zIndex: i + 1 }}
+            >
+              <div className="flex items-baseline justify-between gap-4 border-b border-line-soft pb-4">
+                <span className="font-mono text-[11px] tracking-[0.1em] text-muted">{tag}</span>
+                <span className="tnum font-mono text-[11px] text-muted">
+                  {String(i + 1).padStart(2, "0")} / {String(ROADMAP.length).padStart(2, "0")}
+                </span>
+              </div>
+              <div className="mt-4 text-xl font-medium leading-[1.3] sm:text-2xl">{title}</div>
+              <div className="mt-2.5 max-w-[38em] text-[14px] leading-[1.6] text-muted">{body}</div>
             </div>
           ))}
         </div>

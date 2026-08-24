@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-08-24T09:40:26.860Z",
+  "updatedAt": "2026-08-24T10:09:40.693Z",
   "cycle": {
     "lastAttestAt": "2026-08-24T04:52:42.728Z",
     "attestations": 86,
     "assetAttestations": 159,
-    "failures": 68,
-    "submissionFailures": 1330,
+    "failures": 78,
+    "submissionFailures": 1362,
     "last24h": {
       "gas": "1002800",
       "transactions": 11

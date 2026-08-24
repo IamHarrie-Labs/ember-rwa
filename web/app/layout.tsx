@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, JetBrains_Mono } from "next/font/google";
+import { Archivo, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
@@ -18,6 +18,17 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+/// A third typeface, deliberately narrow in scope: used only for the .accent italic — one
+/// or two words of emphasis per section, never body copy or headings. Everything else on
+/// the site stays Archivo/JetBrains Mono per brand.md.
+const serif = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  style: ["italic"],
+  variable: "--font-serif-accent",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Ember: an ember dies unless it is fed",
   description:
@@ -26,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
+    <html lang="en" className={`${sans.variable} ${mono.variable} ${serif.variable}`}>
       <body className="min-h-dvh bg-paper font-sans text-ink">
         <a
           href="#main"
