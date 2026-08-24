@@ -148,9 +148,9 @@ export default function Dashboard() {
 
         <p className="mt-5 border-t border-line-soft pt-5 text-[13px] leading-[1.6] text-muted">
           If the primary relayer stops, this panel stops advancing before the assets start going
-          out. Anyone can then submit a valid signed proof. The registry checks the proof, never
-          the sender. The reward that would pay a third-party relayer is implemented and tested,
-          but the mainnet pool is not capitalized yet, so relaying is currently unpaid.
+          out. Anyone can then submit a valid signed proof and be paid for it. The registry
+          checks the proof, never the sender, and the mainnet reward pool is funded, not just
+          implemented.
         </p>
       </section>
     </div>

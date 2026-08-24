@@ -67,7 +67,7 @@ const TOC = [
 ] as const;
 
 const FAILURE_ROWS = [
-  ["Primary relayer offline", "Anyone can submit a valid proof. The registry checks the proof, never the sender. The reward that pays a third-party relayer is live in the contract and tested, but the mainnet pool is not capitalized yet, so relaying today is altruistic rather than paid."],
+  ["Primary relayer offline", "Anyone can submit a valid proof and be paid for it. The registry checks the proof, never the sender, and the mainnet reward pool is funded, so a third-party relayer earns a real payout rather than acting on goodwill."],
   ["One asset's proof is unusable", "attestMany is atomic, so the batch reverts, then the cycle retries each asset individually. The bad asset fails alone; the rest keep their cycle."],
   ["Agent clock drifts from chain time", "Observations are timestamped from block.timestamp, not the local clock. Drift over 30s is logged rather than silently producing rejected proofs."],
   ["All relayers offline", "Assets go out; capital escrows; no wrong state is asserted."],
