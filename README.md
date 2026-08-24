@@ -78,9 +78,15 @@ backstop are written up in [`PROJECT.md`](PROJECT.md).
 | SignedAttestationVerifier | [`0x0E8B4F9670fA4942382C77ADD76d9A97840ba6f9`](https://scan.botchain.ai/address/0x0E8B4F9670fA4942382C77ADD76d9A97840ba6f9) |
 | IssuerBond | [`0x80B4a168913A4Df539D01496601E1Febb6593FCe`](https://scan.botchain.ai/address/0x80B4a168913A4Df539D01496601E1Febb6593FCe) |
 | RevenueEscrow | [`0xE99f93a33B2457690262Dc04ea9964C82AC10C36`](https://scan.botchain.ai/address/0xE99f93a33B2457690262Dc04ea9964C82AC10C36) |
+| RevenueEscrowV2 | [`0x6a2D70F6540e1b49eA477125E3a2E66471b6B790`](https://scan.botchain.ai/address/0x6a2D70F6540e1b49eA477125E3a2E66471b6B790) |
 
 Chain ID `677`, RPC `https://rpc.botchain.ai`. Nothing above is a placeholder — every
 address is live and every function callable exactly as shown on the block explorer.
+
+`RevenueEscrowV2` adds automatic fee-routing into the relay reward pool, so permissionless
+relay funds itself from revenue rather than manual top-ups. It is deployed and tested but
+**the frontend still reads V1** — V2 is not yet the active revenue path, and this note will
+go away when it is.
 
 ## Grading table
 
@@ -101,11 +107,17 @@ Listing an asset does not require us. At [`/list`](https://ember-rwa.vercel.app/
 any wallet can:
 
 1. Sign the control message and get the exact DNS TXT record to publish.
-2. Register the domain directly on-chain (`EmberRegistry.register`, permissionless).
-3. Wait for the next scheduled underwriting pass to pick it up automatically — the agent
-   polls the registry for unadmitted assets rather than working off a hardcoded list.
+2. Register the domain directly on-chain (`EmberRegistry.register`, permissionless) — this
+   is the user's own transaction from their own wallet, and nobody can block it.
+3. The proof cycle discovers the new asset on-chain automatically (it reads the registry
+   rather than a hardcoded list) and reports it as awaiting underwriting.
 
-Nobody holding this repository's keys has to act for a new asset to reach the chain.
+**Admission is still a manual step.** Registration is permissionless, but the underwriter
+must then run `npm run underwrite -- <domain>` to grade the asset and write its burn time.
+That gate is deliberate for now — unattended admission would let anyone register arbitrary
+domains and spend the underwriter's gas and model budget at will. Making admission
+permissionless needs a fee or stake to make abuse expensive, and that is roadmap, not
+shipped.
 
 ## What this does not do
 
@@ -129,7 +141,7 @@ contracts/       EmberRegistry, AssetToken, IssuerBond, RevenueEscrow, verifiers
 agent/           proof cycle, underwriter, evidence collection, chain plumbing
   lib/           evidence.js, grading.js, model.js, chain.js, canonical.js, publish.js
 scripts/         deploy.js, keys.js, gas.js
-test/            47 tests: contracts, evidence, grading, underwriting, full e2e harness
+test/            53 tests: contracts, evidence, grading, underwriting, full e2e harness
 web/             Next.js frontend — landing page, dashboard, asset detail, self-serve /list, /docs
 deployments/     addresses written by scripts/deploy.js, one file per network
 PROJECT.md       full architecture writeup
@@ -142,7 +154,7 @@ Requires Node 18+.
 ```bash
 npm install
 cp .env.example .env        # fill in DEPLOYER_KEY, VERIFIER_KEY at minimum
-npm test                    # 47 tests: contracts, agent, full e2e harness
+npm test                    # 53 tests: contracts, agent, full e2e harness
 ```
 
 **Deploy to a local Hardhat network:**
@@ -189,7 +201,7 @@ deployed contracts — none of it is a projection.
 | Gas per attestation | 79,660 (0.0016 BOT at 20 gwei) |
 | Batched, 3 assets | 33.7% cheaper per asset |
 | Block time | 0.75s, measured over 20 blocks |
-| Tests | 47, all passing — contracts, agent, and full end-to-end |
+| Tests | 53, all passing — contracts, agent, and full end-to-end |
 | Admin functions that can pause, freeze, or extend an asset's clock | 0 |
 
 ## License

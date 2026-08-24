@@ -1,7 +1,33 @@
 {
   "assetId": "0xe4e35412499f2b3a9810d0108e9b432141ccc87a79a42a345101400c64f0a896",
-  "updatedAt": "2026-08-24T05:02:27.653Z",
+  "updatedAt": "2026-08-24T07:55:19.005Z",
   "timeline": [
+    {
+      "at": "2026-08-24T05:10:49.726Z",
+      "observedAt": 1787548249,
+      "verdict": "no proof",
+      "reasons": [
+        "RDAP unavailable"
+      ],
+      "evidenceHash": "0xb3af45a9e7d779e15e750aef349f6b5831cf9f3095eb4f62f37873548bfe4aff",
+      "txHash": null,
+      "block": null,
+      "gasUsed": null,
+      "batchSize": null
+    },
+    {
+      "at": "2026-08-24T05:05:56.235Z",
+      "observedAt": 1787547955,
+      "verdict": "no proof",
+      "reasons": [
+        "RDAP unavailable"
+      ],
+      "evidenceHash": "0xdb899a0206fcf00e34d91807d863d51c362ac68cda2a73f57676232474297af2",
+      "txHash": null,
+      "block": null,
+      "gasUsed": null,
+      "batchSize": null
+    },
     {
       "at": "2026-08-24T04:52:42.725Z",
       "observedAt": 1787547154,
@@ -475,28 +501,6 @@
       "block": null,
       "gasUsed": null,
       "batchSize": null
-    },
-    {
-      "at": "2026-08-22T18:06:28.826Z",
-      "observedAt": 1787421981,
-      "verdict": "valid",
-      "reasons": null,
-      "evidenceHash": "0x11e3363bfb77d808d2750ba9f72fc74b2e062b5531f4d082ffa21e4febc0756d",
-      "txHash": "0x4895aeed7b92d68e9dfe82ff9f0e126f10d41851244530df82a6c0b7722327f0",
-      "block": 20584168,
-      "gasUsed": "94030",
-      "batchSize": 2
-    },
-    {
-      "at": "2026-08-22T18:05:15.305Z",
-      "observedAt": 1787421909,
-      "verdict": "valid",
-      "reasons": null,
-      "evidenceHash": "0x70a8f91bba79090ed565aed7786ce8ae070b6d7ed3215f5fb341a971c2da4097",
-      "txHash": "0xd8b6c95ce55be9828a7aa61ef8680af8c1e49ee7d0b93d58b2520faffc4c4a03",
-      "block": 20584071,
-      "gasUsed": "94030",
-      "batchSize": 2
     }
   ]
 }

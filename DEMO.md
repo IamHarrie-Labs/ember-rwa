@@ -7,7 +7,7 @@ screen.
 ## 0. Before you go on stage
 
 - [ ] `https://ember-rwa.vercel.app/dashboard` open in a tab, both assets showing BRIGHT
-- [ ] `https://ember-rwa.vercel.app/asset/<usebeni-id>` open in a second tab
+- [ ] `https://ember-rwa.vercel.app/asset/0xe53aa048ad1a6a9257ba7e82762236e77a52a714b2bc1d11c0dc60c1a97aef77` open in a second tab
 - [ ] Your DNS registrar console open in a third tab, logged in, TXT record for
       `usebeni.xyz` visible and ready to delete
 - [ ] Wallet extension has `0xF6491745Be58d39594484AEfC209b79d037Bb2FB` imported and
@@ -102,8 +102,10 @@ a smooth fake.
 
 Likely questions and the honest answer:
 
-- **"What happens if your relayer goes offline?"** → Anyone can relay a valid signed proof
-  and claim a reward from the funded pool — permissionless, not just theoretically.
+- **"What happens if your relayer goes offline?"** → Anyone can submit a valid proof — the
+  registry checks the proof, never who sent it. Be precise here: the reward that pays a
+  third-party relayer is implemented and tested, but the mainnet pool isn't capitalized
+  yet, so today relaying is permissionless but unpaid. Don't claim the incentive is live.
 - **"Is this audited?"** → No. Domain assets are low-stakes enough to demo unaudited;
   that's explicitly the next step before real value moves through it, not a gap we're
   hiding.

@@ -49,9 +49,9 @@ const MEASURED = [
   { v: "79,660", l: "gas for one attestation", s: "0.0016 BOT at 20 gwei" },
   { v: "33.7%", l: "saved per asset by batching three together", s: "one transaction instead of three" },
   { v: "0.75s", l: "average block time, measured over 20 blocks", s: "measured 2026-08-16" },
-  { v: "39 days", l: "of continuous unattended verification", s: "3 assets, checked every 3 hours" },
+  { v: "159", l: "asset attestations written on mainnet", s: "across 86 transactions since 22 Aug" },
   { v: "20 gwei", l: "flat priority fee, no base fee", s: "cost does not spike with network demand" },
-  { v: "47", l: "automated tests, all passing", s: "contracts, agent, and full end-to-end" },
+  { v: "53", l: "automated tests, all passing", s: "contracts, agent, and full end-to-end" },
   { v: "0", l: "functions that can pause, freeze,", s: "or extend an asset's clock" },
 ];
 
@@ -67,7 +67,7 @@ const TOC = [
 ] as const;
 
 const FAILURE_ROWS = [
-  ["Primary relayer offline", "Anyone can relay a valid proof and claim the reward. The pool is funded at deploy, so the incentive exists rather than being aspirational."],
+  ["Primary relayer offline", "Anyone can submit a valid proof — the registry checks the proof, never the sender. The reward that pays a third-party relayer is live in the contract and tested, but the mainnet pool is not capitalized yet, so relaying today is altruistic rather than paid."],
   ["One asset's proof is unusable", "attestMany is atomic, so the batch reverts, then the cycle retries each asset individually. The bad asset fails alone; the rest keep their cycle."],
   ["Agent clock drifts from chain time", "Observations are timestamped from block.timestamp, not the local clock. Drift over 30s is logged rather than silently producing rejected proofs."],
   ["All relayers offline", "Assets go out; capital escrows; no wrong state is asserted."],
@@ -232,7 +232,7 @@ export default function Docs() {
             ["1", "Sign", "The owner signs ember:<domain>:<issuer> with their wallet. No account, no software of ours in the loop."],
             ["2", "Publish", "They publish the signature as a TXT record on their own domain, at their own registrar."],
             ["3", "Register", "Their wallet calls EmberRegistry.register() directly — permissionless, on-chain, instant."],
-            ["4", "Underwrite automatically", "The agent polls the registry for assets with no burn time set yet and grades them on its next scheduled pass. It does not read from a hardcoded list of assets we chose."],
+            ["4", "Await admission", "The proof cycle discovers the asset on-chain by reading the registry, not a hardcoded list, and reports it as awaiting underwriting. Grading itself is still run manually by the underwriter — see the note below."],
           ].map(([n, title, body], i, arr) => (
             <div
               key={n}
@@ -246,6 +246,15 @@ export default function Docs() {
             </div>
           ))}
         </div>
+        <p className="mt-6 max-w-[42em] text-[15px] leading-[1.65] text-body">
+          <span className="font-medium">Admission is still a manual step.</span> Anyone can
+          register an asset without asking us, and nobody can block that transaction. But
+          the underwriter still runs grading by hand before an asset gets a burn time and
+          becomes tradable. That gate is deliberate: unattended admission would let anyone
+          register arbitrary domains and spend the underwriter&apos;s gas and model budget
+          at will. Opening it up needs a fee or a stake to make abuse expensive — roadmap,
+          not shipped.
+        </p>
       </DocSection>
 
       <DocSection id="kill-sequence" eyebrow="The kill sequence" title="What happens, second by second">

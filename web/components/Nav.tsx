@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { WalletButton } from "./WalletButton";
-import { CHAIN_ID } from "@/lib/chain";
 
 const LINKS = [
   { href: "/", label: "Overview" },
@@ -46,10 +45,6 @@ export function Nav() {
         </nav>
 
         <div className="order-4 hidden flex-1 sm:block" />
-
-        <div className="order-4 hidden border-l border-line pl-3.5 font-mono text-[11px] text-muted md:block">
-          BOT · {CHAIN_ID}
-        </div>
 
         <div className="order-2 ml-auto sm:order-5 sm:ml-0">
           <WalletButton />
